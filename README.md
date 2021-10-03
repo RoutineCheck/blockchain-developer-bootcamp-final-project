@@ -24,5 +24,5 @@ If two users have each listed a valid NFT for exchange at a set price, user can 
 
 (Once both users have agreed to the request, the exchange function will instantly make each user account purchase the other's NFT at their set price, and pay them the difference amount provided. If the user tries to change set price after the fact, the contract will fail and the infringing party will be charged the entire gas cost of the contract)
 
-Or, it could act as an escrow (hold both NFTs), until releasing the NFT to the other account at a time set by the contract, or by other conditions. In this case, both users will send their token to a contract account's Metamask, and if one party does not enter their token, the transaction will be canceled, the NFT refunded, and the infringing party will be charged the entire gas cost of the contract.
+Or, it could act as an escrow (hold both NFTs), until releasing the NFT to the other account at a time set by the contract, or by other conditions. In this case, both users will send their token to a contract account's Metamask. If one party does not enter their token before the contract is initialized, the transaction will be canceled, the NFT refunded, and the infringing party will be charged the entire gas cost of the contract.
 
