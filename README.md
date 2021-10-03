@@ -9,7 +9,7 @@ May (or partially may not) include the 3 functions below:
 When the contract runs, a log of all previous viewing, bidding and exchanging is recorded, which will be retrieved at the initialization of the contract. All future contract functions using the same NFT will pull the basic (unchanged) information from the log. 
 
 # Registration
-User will enter their preferences, preferred Metamask aliases and account name, and other basic information into the contract.
+User will enter their preferences, their Metamask account name, and other basic information into the contract.
 
 # Viewing Function
 User can enter the name of the target NFT they want to interact with into the contract and get a fully detailed list result returned including name, origin, owner, block, NFT marketplace, and either various NFT exchanges' current and previous prices, or the auction details including bid price, current bid, previous bids etc. 
