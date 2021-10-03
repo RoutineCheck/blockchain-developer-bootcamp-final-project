@@ -1,9 +1,9 @@
 # blockchain-developer-bootcamp-final-project
-## Decentralized Application to Automatically Interact With NFTs from dApp
+# Decentralized Application to Automatically Interact With NFTs from dApp
 
 May (or partially may not) include the 3 functions below:
 
-# Automate viewing, bidding on (in NFT auctions)/buying, and exchanging NFTs with a single dApp
+## Automate viewing, bidding on (in NFT auctions)/buying, and exchanging NFTs with a single dApp
 
 # Initialization
 When the contract runs, a log of all previous viewing, bidding and exchanging is recorded, which will be retrieved at the initialization of the contract. All future contract functions using the same NFT will pull the basic (unchanged) information from the log. 
