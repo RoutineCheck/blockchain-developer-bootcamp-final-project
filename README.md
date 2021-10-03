@@ -18,13 +18,13 @@ User can enter the name of the target NFT they want to interact with into the co
 
 
 # Bidding/Buying Function
-The user can choose to buy the NFT at the set price, or bid on that NFT in the contract and then either enter the bid price to a certain amount, use an advanced option which uses conditional logic to automatically set the best price, or manually input conditions to set the bid price. 
+The user can choose to buy the NFT at the set price, or bid on that NFT in the contract and then either enter the bid price to a certain amount, let the contract automatically set the best price, or manually input conditions to set the bid price. 
 
 (The smart contract will use the results of the "view" request to bid using user's Metamask account and NFT marketplace)
 
 
 # Advanced feature: Exchanging Function
-If two users have each listed a valid NFT for exchange at a set price, user can enter the Metamask account (or Alias) of the user that they request to exchange NFTs with into the contract, then the contract calculates the amount of difference (in ether) between their NFTs, and then user can choose to exchange NFTs if both agree. 
+If two contract users have each listed a valid NFT for exchange at a set price, user can enter the Metamask account (or Alias) of the user that they request to exchange NFTs with into the contract, then the contract calculates the amount of difference (in ether) between their NFTs, and then user can choose to exchange NFTs if both agree. 
 
 (Once both users have agreed to the request, the exchange function will instantly make each user account purchase the other's NFT at their set price, and pay them the difference amount provided. If the user tries to change set price after the fact, the contract will fail and the infringing party will be charged the entire gas cost of the contract)
 
