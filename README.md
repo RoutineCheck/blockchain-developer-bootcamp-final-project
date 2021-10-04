@@ -3,7 +3,7 @@
 
 May (or partially may not) include the 3 functions below:
 
-## Automate viewing, bidding on (in NFT auctions)/buying, and exchanging NFTs in a single contract
+## Automate viewing, bidding on (in NFT auctions)/buying, and exchanging NFTs in a smart contract
 
 # Initialization
 When the contract runs, a log of all previous viewing, bidding and exchanging is recorded, which will be retrieved at the initialization of the contract. All future contract functions using the same NFT will pull the basic (unchanged) information from the log. 
