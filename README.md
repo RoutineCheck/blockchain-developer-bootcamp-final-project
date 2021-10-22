@@ -10,20 +10,48 @@ When the contract runs, a log of all previous viewing, bidding and exchanging is
 
 constructor(struct initInfo) public {}
 
-Public Variables:
+**Public Variables:**
 
 address public owner;
 uint256 public userCount;
 struct initInformation;
 mapping(uint => User) userId;
 mapping(uint => User) bidId;
+
+enum nftState {
+ForSale,
+Sold,
+Purchased,
+Received
+}
+
+struct User {
+string name;
+uint userId;
+uint nftsPurchased;
+nftState state;
+address payable user;
+}
+
+**Modifiers:**
+TBD
+
+**Events: **
+
+event LogForSale(uint indexed userId);
+event LogSold(uint indexed userId);
+event LogPurchased(uint indexed userId);
+event LogReceived(uint indexed userId);
+
+
 mapping(uint => address) exchangeId;
 
 
 # Registration
 User will "login": enter their preferences, their Metamask account name, and other basic information into the contract.
 
-function registration(string uname, string pword, string email, struct metaLogin, uint256 userCount, address userId) {}
+function registration(string uname, string pword, string email, struct metaLogin, uint256 userCount, uint userId
+) {}
 
 # Viewing Function
 User can enter the name of the target NFT they want to interact with into the contract and get a fully detailed list result returned including name, origin, owner, block, NFT marketplace, and the NFT exchanges' current and previous prices OR the auction details including bid price, current bid, previous bids etc. 
@@ -54,7 +82,9 @@ If two contract users have each listed a valid NFT for exchange at a set price, 
 
 (Once both users have agreed to the request, the exchange function will instantly make each user account purchase the other's NFT at their set price, and pay them the difference amount provided. If the user tries to change set price after the fact, the contract will fail and the infringing party will be charged the entire gas cost of the contract)
 
+
 function exchangeNFT(bool toExchange, state exchangeState, uint userId, address nftOwners, struct nftsToTrade) public returns (bool exchangeConfirmation) {}
+
 
 Additional function: the smart contract could act as an escrow (hold both NFTs), until releasing the NFT to the other account at a time set by the contract, or by other conditions. In this case, both users will send their token to a contract account's Metamask. If one party does not enter their token before the contract is initialized, the transaction will be canceled, the NFT refunded, and the infringing party will be charged the entire gas cost of the contract.
 
