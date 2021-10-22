@@ -9,7 +9,7 @@ May (or partially may not) include the 3 functions below:
 When the contract runs, a log of all previous viewing, bidding and exchanging is recorded, which will be retrieved at the initialization of the contract. All future contract functions using the same NFT will pull the basic (unchanged) information from the log. 
 
 constructor(struct initInfo) public {
-//retrieves user information (from external source) and inputs it into variables
+// retrieves user information (from external source) and inputs it into variables
 }
 
 **Public Variables:**
