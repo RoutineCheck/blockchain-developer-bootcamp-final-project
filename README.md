@@ -1,109 +1,23 @@
-# blockchain-developer-bootcamp-final-project
-# Decentralized Application to Automatically Interact With NFTs from a Contract
+The concept that I ended up doing was an educational cryptocurrency & math game you could implement into your LMS application, with a real, usable in-game NFT platform to view, buy and trade NFTS.
 
-May (or partially may not) include the 3 functions below:
-
-## Automate viewing, bidding on (in NFT auctions)/buying, and exchanging NFTs in a smart contract
-
-# Initialization
-When the contract runs, a log of all previous viewing, bidding and exchanging is recorded, which will be retrieved at the initialization of the contract. All future contract functions using the same NFT will pull the basic (unchanged) information from the log. 
-
-constructor(struct initInfo) public {
-// retrieves user information (from external source) and inputs it into variables
-}
-
-# Public Variables:
-
-address public owner;
-uint256 public userCount;
-struct initInformation;
-mapping(uint => User) userId;
-mapping(uint => User) bidId;
-
-enum nftState {
-ForSale,
-Sold,
-Purchased,
-Received
-}
-
-struct User {
-string name;
-uint userId;
-uint nftsPurchased;
-nftState state;
-address payable user;
-}
-
-# Modifiers:
-
-TBD
-
-# Events:
-
-event LogForSale(uint indexed userId);
-event LogSold(uint indexed userId);
-event LogPurchased(uint indexed userId);
-event LogReceived(uint indexed userId);
+In CryptoZombies, each Zombie object created with CreateRandomZombie() was linked to a zombieId from _createZombie, which is mapped to an address. The mapping ownerZombieCount[] is then incremented. zombieToOwner[] links the newly created zombie to the address.  These mean that each new instance of zombies can later be added to the blockchain (recognized as owned by you). [More research needed]
+However, in the backend CryptoZombies has images linked to the characters in the hashed zombieId, which allows for customization and then production of a unique zombie Token every time.
 
 
-mapping(uint => address) exchangeId;
+Fish.io is the project I am making, with the features of CryptoZombies and more, where each fish will be a unique token. The catch is that the math game will be the main part, where you have to answer the questions with increasing difficulty and once you've beat the level, you catch a new "fish". Additionally, the NFT platform will have a UI to track your fish, buy others using ETH and to trade your fish for others. This is a very expandable idea and covers many concepts learned within the course, though for this implementation it will cover just the basic mathematics module.
 
 
-# Registration
+The Javascript + CSS + HTML front-end uses PIXI.js as a framework, due to its compatibility with WebGL 2, and its mutability in comparison to other rigid frameworks like GDevelop. Nonetheless, the solidity portion is still a work in-progress due to the nature of my project being a game which can only be built with clear functionality before even adding the NFT layer. I just completed the game logic, of over 2000 code lines (although highly simplified within Pixi.js framework), and I plan to complete the solidity portion within the week, tops. 
 
-User will "login": enter their preferences, their Metamask account name, and other basic information into the contract.
-
-function registration(string uname, string pword, string email, struct metaLogin, uint256 userCount, uint userId
-) {
-// registers user
-}
-
-# Viewing Function
-
-User can enter the name of the target NFT they want to interact with into the contract and get a fully detailed list result returned including name, origin, owner, block, NFT marketplace, and the NFT exchanges' current and previous prices OR the auction details including bid price, current bid, previous bids etc. 
-
-(A web scraper will pull detailed results from NFT exchanges, and the contract will connect to user's Metamask account and NFT marketplace)
+The point of the game is demonstrative, and can be expanded more upon with the use of NFTs and a microeconomy of users who trade them.
 
 
+Currently Implementing these Solidity Functions:
 
-function viewNFT(string name, string origin, address nftOwner, uint nftBlock, string nftMarket, uint currentPrice, uint previousPrice, uint bidCost, uint currentBid, uint previousBid, struct initInfo, uint userId) public view { 
+View NFTs that were minted / earned during the game process
 
-// displays information on the user's chosen NFT
-}
-
-
-# Bidding/Buying Function
-
-The user can choose to buy the NFT at the set price, or bid on that NFT in the contract and then either enter the bid price to a certain amount, let the contract automatically set the best price, or manually input conditions to set the bid price. 
-
-(The smart contract will use the results of the "view" request to bid using user's Metamask account and NFT marketplace)
+View the type of Fish(es) that the user owns
 
 
-function purchaseNFT(bool toBuy, state bidState, uint userId) 
-public 
-payable 
-returns (uint bidId) {
-
-//bids on or buys the user's chosen NFT 
-}
-
-
-
-
-# Advanced feature: Exchanging Function
-
-If two contract users have each listed a valid NFT for exchange at a set price, user can enter the Metamask account (or Alias) of the user that they request to exchange NFTs with into the contract, then the contract calculates the amount of difference (in ether) between their NFTs, and then user can choose to exchange NFTs if both agree. 
-
-(Once both users have agreed to the request, the exchange function will instantly make each user account purchase the other's NFT at their set price, and pay them the difference amount provided. If the user tries to change set price after the fact, the contract will fail and the infringing party will be charged the entire gas cost of the contract)
-
-
-function exchangeNFT(bool toExchange, state exchangeState, uint userId, address nftOwners, struct nftsToTrade) public returns (bool exchangeConfirmation) {
-// requests to exchange the user's chosen NFT with another users' NFT
-}
-
-
-# Additional exchanging function: 
-
-the smart contract could act as an escrow (hold both NFTs), until releasing the NFT to the other account at a time set by the contract, or by other conditions. In this case, both users will send their token to a contract account's Metamask. If one party does not enter their token before the contract is initialized, the transaction will be canceled, the NFT refunded, and the infringing party will be charged the entire gas cost of the contract.
+View total number of fish NFTs minted 
 
