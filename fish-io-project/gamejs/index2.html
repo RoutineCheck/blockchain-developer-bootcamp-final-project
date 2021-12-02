@@ -8,13 +8,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fish.io</title>
 
+
+    <link rel="apple-touch-icon" sizes="180x180" href="./html_favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./html_favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./html_favicon/favicon-16x16.png">
+    <link rel="manifest" href="./html_favicon/site.webmanifest">
+    <link rel="mask-icon" href="./html_favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+
+
 </head>
 
 <body>
 
     <script src="./node_modules/pixi.js/dist/browser/pixi.min.js"></script>
     <script src="./node_modules/@pixi/graphics-extras/dist/browser/graphics-extras.min.js"></script>
-    <form id="myForm">
+    <form class = "form" id="myForm">
         <input type="file" id="csvFile" accept=".csv" />
         <br />
         <input type="submit" value="Submit" />
@@ -22,16 +33,12 @@
 
     </form>
     
-    <form id="myInput"> 
+    <form class = "form" id="myInput"> 
         <input id="inputFish" placeholder="fish name, e.g. Big Grey">
         <br>
 
         <input type="submit" value="Input">
-
-    </form>
-
-
-
+</form>
 
 
 

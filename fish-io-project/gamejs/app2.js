@@ -1,54 +1,54 @@
 //METAMASK REQUEST
-// var transactionApproval = true;
-// function validate() {
-//   if (typeof web3 !== 'undefined'){
-//     console.log('MetaMask is installed')
-//     web3.eth.getAccounts(function(err, accounts){
-//       if (err != null) {
-//         console.log(err)
-//       }
-//       else if (accounts.length === 0) {
-//         console.log('MetaMask is locked')
-//       }
-//       else {
-//         console.log('MetaMask is unlocked')
-      
-//         tokenInst.balanceOf(
-//           web3.eth.accounts[0], 
-//           function (error, result) {
-     
-//           if (!error && result) {
-//             var balance = result.c[0];
-//             if (balance < dappCost * (100000000)) {
-//               console.log('MetaMask has insufficient balance')
-//               return false;
-//             }
-//             console.log('MetaMask has balance')
-//             if (transactionApproval == true ){
-//               requestApproval();
-//               transactionApproval = false;
-//             }
-//           }
-//           else {
-//             console.error(error);
-//           }
-//           return false;
-//         });
-//       }
-//     });
-//   } 
-//   else{
-//     console.log('MetaMask is not installed')
-//   }
-// }
-// // request approval from MetaMask user
+var transactionApproval = true;
+function validate() {
+  if (typeof web3 !== 'undefined'){
+    console.log('MetaMask is installed')
+    web3.eth.getAccounts(function(err, accounts){
+      if (err != null) {
+        console.log(err)
+      }
+      else if (accounts.length === 0) {
+        console.log('MetaMask is locked')
+      }
+      else {
+        console.log('MetaMask is unlocked')
+
+        tokenInst.balanceOf(
+          web3.eth.accounts[0], 
+          function (error, result) {
+
+          if (!error && result) {
+            var balance = result.c[0];
+            if (balance < dappCost * (100000000)) {
+              console.log('MetaMask has insufficient balance')
+              return false;
+            }
+            console.log('MetaMask has balance')
+            if (transactionApproval == true ){
+              requestApproval();
+              transactionApproval = false;
+            }
+          }
+          else {
+            console.error(error);
+          }
+          return false;
+        });
+      }
+    });
+  } 
+  else{
+    console.log('MetaMask is not installed')
+  }
+}
+// request approval from MetaMask user
 // function requestApproval() {
 //   tokenInst.approve(
 //     addrHOLD,
 //     truePlanCost,
 //     { gasPrice: web3.toWei('50', 'gwei') },
 //     function (error, result) {
-      
+
 //     if (!error && result) {
 //       var data;
 //       console.log('approval sent to network.');
@@ -77,17 +77,22 @@
 
 
 // HTML FORM INFORMATION
+
+
 let data;
 
 const myForm = document.getElementById("myForm");
 const csvFile = document.getElementById("csvFile");
 const inputFish = document.getElementById("inputFish");
 let fishName = "";
+let fishID;
+const fishIDs = [];
+
 myInput.addEventListener("submit", function (e) {
     e.preventDefault();
     fishName = document.getElementById("inputFish").value
 
-    alert("Your fish name will be " +fishName);
+    alert("Your fish name will be " + fishName);
 });
 
 myForm.addEventListener("submit", function (e) {
@@ -150,27 +155,13 @@ app.renderer.backgroundColor = 0x23395D;
 
 app.renderer.view.style.position = 'absolute';
 
-// app.view.style.cursor = '../Game Files/Sprites/GameSprites/BlueCursor.png'
+
 
 document.body.appendChild(app.view);
 
 const Graphics = PIXI.Graphics;
 
-//Initialize Variables
-
-//Extract Text from File
-// let photo = document.getElementById("image-file").files[0];
-// let formData = new FormData();
-
-// formData.append("photo", photo);
-// fetch('/upload/image', {method: "POST", body: formData});
-
-// fetch('temperatures.txt')
-//   .then(response => response.text())
-//   .then(data => {
-//   	// Do something with your data
-//   	console.log(data);
-//   });
+//Initialize Global Variables
 
 let switchSpeed = false;
 let bgOSpeed;
@@ -260,6 +251,10 @@ let level10 = false;
 let levels = [];
 let nextLevel = false;
 
+//Boss Level Win (useful for high # of Levels)
+
+let bossLevelWin = false;
+
 //Question and Answer pairs, along with Correct Answer pairs
 let pairQ1 = [];
 let pairQ2 = [];
@@ -275,15 +270,17 @@ let cAnswer3 = "";
 let cAnswer4 = "";
 let cAnswer5 = "";
 let correctAnswers = [];
+
+
+//
 // Fish Types
 let fishTypes = ["GreyFish", "BlueFish", "OrangeFish"];
 
-//level win
 
-let bossLevelWin = false;
 
 document.body.style.cursor = 'none';
 
+// ALL STYLES
 
 // TEXT STYLE: TITLE
 const style = new PIXI.TextStyle({
@@ -298,6 +295,64 @@ const style = new PIXI.TextStyle({
     dropShadowBlur: 4,
     dropShadowColor: '#000000'
 });
+
+//TEXT STYLE: GAME INSTRUCTIONS
+const style1 = new PIXI.TextStyle({
+    fontFamily: 'Montserrat',
+    fontSize: 45,
+    fill: 'cyan',
+    stroke: '#fffffff',
+    strokeThickness: 4,
+    // dropShadow: false,
+    // dropShadowDistance: 10,
+    // dropShadowAngle: Math.PI / 2,
+    // dropShadowBlur: 4,
+    // dropShadowColor: '#000000'
+});
+
+// SCORE STYLE
+const style2 = new PIXI.TextStyle({
+    fontFamily: 'Montserrat',
+    fontSize: 45,
+    fill: 'white',
+    stroke: '#fffffff',
+    strokeThickness: 4,
+    dropShadow: true,
+    dropShadowDistance: 3,
+    dropShadowAngle: Math.PI / 2,
+    dropShadowBlur: 4,
+    dropShadowColor: '#000000'
+});
+
+
+//TEXT STYLE: QUESTION BOARD TEXT
+const style3 = new PIXI.TextStyle({
+    fontFamily: 'Helvetica',
+    fontSize: 50,
+    fontStyle: "italic",
+    fill: 'orange',
+    stroke: '#000000',
+    strokeThickness: 3,
+    // dropShadow: false,
+    // dropShadowDistance: 10,
+    // dropShadowAngle: Math.PI / 2,
+    // dropShadowBlur: 4,
+    // dropShadowColor: '#000000'
+});
+
+const style4 = new PIXI.TextStyle({
+    fontFamily: 'Montserrat',
+    fontSize: 45,
+    fill: 'chartreuse',
+    stroke: '#fffffff',
+    strokeThickness: 4,
+    // dropShadow: false,
+    // dropShadowDistance: 10,
+    // dropShadowAngle: Math.PI / 2,
+    // dropShadowBlur: 4,
+    // dropShadowColor: '#000000'
+});
+
 
 // START MENU CONTAINER: SCONTAINER
 const sContainer = new PIXI.Container();
@@ -314,79 +369,110 @@ const fgContainer = new PIXI.Container();
 // GAME OVER CONTAINER: goContainer
 const goContainer = new PIXI.Container();
 
+// LOADING... CONTAINER: LCONTAINER
+
+const lContainer = new PIXI.Container();
+
+// GAME MENU CONTAINER: GMCONTAINER
+
+const gmContainer = new PIXI.Container();
+gmContainer.visible = false;
+
+
+//ANIMATED SPRITES CONTAINER: ACONTAINER & BKG CONTAINER
+const bkgContainer = new PIXI.Container();
+const aContainer = new PIXI.Container();
+
+
+//NFT WORK HERE
+
+// NFT DISPLAY CONTAINER: nftContainer
+const nftContainer = new PIXI.Container();
+nftContainer.width = 1000;
+nftContainer.height = 1000;
+// NFT POPUP CONTAINER: popupContainer
+const popupContainer = new PIXI.Container();
+const popupInfo = new PIXI.Text('Your NFTs:', style2);
+popupInfo.position.set(680, 530);
+popupInfo.style.wordWrap = false;
+popupInfo.style.align = 'center';
+
+
+const myNFTName = new PIXI.Text(fishName.toString() + fishTypes[0], style2);
+myNFTName.position.set(680, 600);
+myNFTName.style.wordWrap = false;
+myNFTName.style.align = 'center';
+myNFTName.visible = false;
+
+console.log("fishName is: " + fishName.toString());
 
 
 
 
-//TITLE
+const myNFTInfo = new PIXI.Text('Earn NFTs to trade in-game.', style2);
+myNFTInfo.position.set(780, 280);
+myNFTInfo.style.wordWrap = false;
+myNFTInfo.style.align = 'center';
+
+
+
+
+const nftRect = new Graphics();
+nftRect.beginFill(0x008B8B)
+    .lineStyle(4, 0xFFFFFF, 1)
+    .drawRect(550, 500, 700, 300)
+    .endFill();
+
+
+
+popupContainer.addChild(nftRect);
+popupContainer.addChild(popupInfo);
+popupContainer.addChild(myNFTName);
+popupContainer.visible = false;
+const viewButton = PIXI.Texture.from('../Game Files/Sprites/GameSprites/NFTs/viewNfTs.png')
+const viewButtonOver = PIXI.Texture.from('../Game Files/Sprites/GameSprites/NFTs/viewNfTsClicked.png')
+
+
+
+
+//ALL SFX (USING HOWL LIBRARY)
+const buttonSFX = new Howl({
+    src: ['../Game Files/Music/SFX/mixkit-quick-positive-video-game-notification-interface-265.wav']
+});
+
+const oceanSFX = new Howl({
+    src: ['../Game Files/Music/SFX/mixkit-sinking-in-the-sea-1178-loop.wav'],
+    loop: true
+});
+
+
+
+//TITLE TEXT
 
 const myTitle = new PIXI.Text('Fish.io', style);
 
 
 
 myTitle.position.set(800, 100);
-myTitle.style.wordWrap = true;
-myTitle.style.wordWrapWidth = 200;
+myTitle.style.wordWrap = false;
+// myTitle.style.wordWrapWidth = 200;
 myTitle.style.align = 'center';
 sContainer.addChild(myTitle);
 
-// const myData = new PIXI.Text(data, style);
 
 
-
-// myData.position.set(800, 100);
-// myData.style.wordWrap = true;
-// myData.style.wordWrapWidth = 200;
-// myData.style.align = 'center';
-// sContainer.addChild(myData);
-
-//TEXT STYLE: GAME INSTRUCTIONS
-const style1 = new PIXI.TextStyle({
-    fontFamily: 'Montserrat',
-    fontSize: 45,
-    fill: 'cyan',
-    stroke: '#fffffff',
-    strokeThickness: 4,
-    // dropShadow: false,
-    // dropShadowDistance: 10,
-    // dropShadowAngle: Math.PI / 2,
-    // dropShadowBlur: 4,
-    // dropShadowColor: '#000000'
-});
-const style4 = new PIXI.TextStyle({
-    fontFamily: 'Montserrat',
-    fontSize: 45,
-    fill: 'chartreuse',
-    stroke: '#fffffff',
-    strokeThickness: 4,
-    // dropShadow: false,
-    // dropShadowDistance: 10,
-    // dropShadowAngle: Math.PI / 2,
-    // dropShadowBlur: 4,
-    // dropShadowColor: '#000000'
-});
 // GAME INSTRUCTIONS
+
 const myInfo = new PIXI.Text("Use the Mouse to move. Escape the fisherman's hook!", style1);
-myInfo.position.set(800, 100);
-myInfo.style.wordWrap = true;
-myInfo.style.wordWrapWidth = 700;
+myInfo.position.set(500, 100);
+myInfo.style.wordWrap = false;
+// myInfo.style.wordWrapWidth = 200;
 myInfo.style.align = 'center';
 myInfo.visible = false;
 xContainer.addChild(myInfo);
 
-// SCORE
-const style2 = new PIXI.TextStyle({
-    fontFamily: 'Montserrat',
-    fontSize: 45,
-    fill: 'white',
-    stroke: '#fffffff',
-    strokeThickness: 4,
-    dropShadow: true,
-    dropShadowDistance: 3,
-    dropShadowAngle: Math.PI / 2,
-    dropShadowBlur: 4,
-    dropShadowColor: '#000000'
-});
+
+//LEVEL WIN TEXTS
 const correct = new PIXI.Text("" + " is Correct!", style1);
 correct.position.set(900, 300);
 correct.style.wordWrap = true;
@@ -397,22 +483,68 @@ bContainer.addChild(correct);
 
 let myLevel = new PIXI.Text("Level: 1", style4);
 myLevel.position.set(800, 150);
-myLevel.style.wordWrap = true;
+myLevel.style.wordWrap = false;
 myLevel.style.wordWrapWidth = 700;
 myLevel.style.align = 'center';
 myLevel.visible = false;
-// xContainer.addChild(myLevel);
 
+//TEXT: HIGH SCORE
+let myHScore = new PIXI.Text("", style2);
+
+myHScore.position.set(1400, 280);
+myHScore.style.wordWrap = true;
+myHScore.style.wordWrapWidth = 300;
+myHScore.style.align = 'center';
+myHScore.visible = false;
+sContainer.addChild(myHScore);
+
+sContainer.interactive = true;
+sContainer.buttonMode = true;
+app.renderer.plugins.interaction.defaultCursorStyle = 'inherit';
+
+
+
+//GAME OVER DISPLAY BOX
+const gameoverRect = new Graphics();
+gameoverRect.beginFill(0x008B8B)
+    .lineStyle(4, 0xFFFFFF, 1)
+    .drawRect(700, 100, 400, 500)
+    .endFill();
+
+
+//GAME WIN DISPLAY BOX
+const gamewinRect = new Graphics();
+gamewinRect.beginFill(0xFFFFFF)
+    .lineStyle(4, 0x000000, 3)
+    .drawRect(700, 100, 400, 500)
+    .endFill();
+
+//Function to make sprites invisible
+
+
+//ALL LOGICAL FUNCTIONS
+
+//Function to Toggle Booleans
+function toggleFlag(value) {
+    var toggle = value ? false : true
+    return toggle;
+
+
+}
+
+//Function to reset  global variable values
 function resetVars() {
     try {
 
-        hookUp.visible = false;
-        hookCombo.visible = false;
-        hookQs.visible = false;
-        hookQsR.visible = false;
-        hookQsW[i].visible = false;
-
-
+        //reset hooks and question baord sprites
+        for (i = 0; i < 3; i++) {
+            hookUp[i].visible = false;
+            hookCombo[i].visible = false;
+            hookQs[i].visible = false;
+            hookQsR[i].visible = false;
+            hookQsW[i].visible = false;
+        }
+        //reset ticker speed related variables
         bgX = 0;
         bgF = 0;
         bgF2 = 0;
@@ -423,17 +555,14 @@ function resetVars() {
         console.log("Variables are not initialized");
     }
 }
-//When level is won 
 
-// function boardsVisible() {
-//     board1.visible = true;
-//     board2.visible = true;
-//     board3.visible = true;
-//     question.visible = true;
-// }
+
+
+//Function to loop Game when level is won 
+
 function onLevelWin() {
     myLevel.visible = true;
-    for (let i = 0; i < levels.length; i++) {
+    for (let i = 0; i < levels.length - 1; i++) {
         if (levels[i] == true) {
             console.log("Correct Answer!");
             console.log(levels.length);
@@ -442,15 +571,9 @@ function onLevelWin() {
             correct.text = correctAnswers[i].replace('*', '') + " is Correct!"
 
 
-
-
         }
     }
-    if (level5 == true) {
-        myLevel.text = "Boss Level! : " + (i + 1);
-        console.log(myLevel.text + " Loaded")
-        correct.text = correctAnswers[i].replace('*', '') + " is Correct! You won a NFT in your Inventory!"
-    }
+    let fn = levels.length - 1
 
 
 
@@ -464,37 +587,72 @@ function onLevelWin() {
 
 
 
-if (level5 = false) {
-    setTimeout(() => { bgH = 4370; nextLevel = true; hookPlay(); correct.visible = false; }, 8000);
-} else {
-    onGameWin();
-}
+    if (level5 == false) {
+        setTimeout(() => { resetVars(); bgH = 4370; nextLevel = true; hookPlay(); correct.visible = false; }, 1000);
+    }
+
+    if (level5 == true) {
+        setTimeout(() => {
+            onGameWin();
+        }, 1000)
+    }
 
 }
 
+//Function to notify players upon winning the game
+function loopOnGameWin() {
+    setTimeout(() => {
+        onGameWin();
+    }, 5000);
+}
 function onGameWin() {
 
-    
-    if (typeof fishName !== 'string') {
-        alert("Please enter a name in the top left to receive a Fish NFT. ")
-    }else {
-        alert("Hi " + fishName +", Congrats! Your NFT is in your inventory. It's type is: " + fishTypes[0] )
+    if (fishName == "") {
+   
+        var maxLength = 14;
+        var fName
+        
+        while (fName == null || fName.length > maxLength) {
+            fName = window.prompt('Please provide a fishname under ' + maxLength + ' characters');
+        }
+       
+        fishName = fName
+
+        alert("Hi " + fishName + ", Congrats! Your NFT is in your inventory. It's type is: " + fishTypes[0]);
         miniOnGameEnd();
         miniRemoveHQs();
-        this.texture = homeButton;
+
         gmContainer.visible = false;
         sContainer.visible = true;
+        nftContainer.visible = true;
+        popupContainer.visible = true;
         goContainer.visible = false;
         bContainer.visible = false;
         myNFTName.visible = true;
-        
+
+    } else if (fishName != "") {
+
+        alert("Hi " + fishName + ", Congrats! Your NFT is in your inventory. It's type is: " + fishTypes[0]);
+        miniOnGameEnd();
+        miniRemoveHQs();
+
+        gmContainer.visible = false;
+        sContainer.visible = true;
+        nftContainer.visible = true;
+        popupContainer.visible = true;
+        goContainer.visible = false;
+        bContainer.visible = false;
+        myNFTName.visible = true;
+
     }
 
 
     console.log("You Won! See your high score.")
 
 }
-// for button4 (Reset Button)
+
+
+//Function for on Game End (if player did not lose)
 function miniOnGameEnd() {
     buttonStarted = false;
     gameEnded = true;
@@ -523,11 +681,14 @@ function miniOnGameEnd() {
     correctAnswers = [];
 
 }
+
+//Function for on Game End (if player lost)
 function onGameEnd() {
 
     buttonStarted = false;
     gameEnded = true;
     removeQBoards();
+    gameEnd();
     gmContainer.visible = false;
     score.visible = false;
     myLevel.visible = false;
@@ -538,17 +699,12 @@ function onGameEnd() {
     gameOver.style.wordWrapWidth = 700;
     gameOver.style.align = 'center';
 
-
-
     app.stage.addChild(goContainer);
     bContainer.visible = false;
     goContainer.addChild(gameoverRect);
     goContainer.addChild(gameOver);
     goContainer.addChild(button5);
     goContainer.addChild(button6);
-
-
-
 
     delayStart = false;
 
@@ -572,9 +728,9 @@ function onGameEnd() {
 // FUNCTIONS TO CREATE AND RETRIEVE SCORES
 function getScore(message) {
     score = new PIXI.Text(message.toString(), style2);
-    // console.log(typeof score)
+
     score.position.set(800, 100);
-    // console.log(scoreCounter);
+
     return score;
 }
 
@@ -591,26 +747,11 @@ function between(x, min, max) {
 //FUNCTION TO CHECK IF ARRAYS ARE FULLY TRUE
 let checker = arr => arr.includes(true);
 
-// TEXT STYLE: SCORE IS IN INITLEVEL()
-
-//TEXT STYLE: QUESTION BOARD TEXT
-const style3 = new PIXI.TextStyle({
-    fontFamily: 'Helvetica',
-    fontSize: 50,
-    fontStyle: "italic",
-    fill: 'orange',
-    stroke: '#000000',
-    strokeThickness: 3,
-    // dropShadow: false,
-    // dropShadowDistance: 10,
-    // dropShadowAngle: Math.PI / 2,
-    // dropShadowBlur: 4,
-    // dropShadowColor: '#000000'
-});
 
 //Function to Set Level
 
 function returnLevel() {
+
     console.log("Returning Level");
 
     if (hooksCalled == 1) {
@@ -619,7 +760,7 @@ function returnLevel() {
         level3 = false;
         level4 = false;
         level5 = false;
-        console.log("0", "1", "3", "4")
+        console.log("")
 
         console.log("Level 1");
     }
@@ -629,7 +770,6 @@ function returnLevel() {
         level3 = false;
         level4 = false;
         level5 = false;
-        // updateQandA(pairQ2[0], pairQ2[1], pairQ2[2], pairQ2[3]);
         console.log("Level 2");
     }
     else if (hooksCalled == 3) {
@@ -647,7 +787,6 @@ function returnLevel() {
         level3 = false;
         level4 = true;
         level5 = false;
-        // updateQandA(pairQ4[0], pairQ4[1], pairQ4[2], pairQ4[3]);
 
         console.log("Level 4");
     }
@@ -657,15 +796,31 @@ function returnLevel() {
         level3 = false;
         level4 = false;
         level5 = true;
+    } else if (hooksCalled == 6) {
+
+        onGameWin();
+
+
     } else {
-        console.log("No Level");
 
     }
+    console.log("No Level");
     levels = [level1, level2, level3, level4, level5];
 
-
+    console.log("Hooks called = " + hooksCalled);
+    console.log("Level 1 = true?" + level1);
+    console.log("Level 2 = true?" + level2);
+    console.log("Level 3 = true?" + level3);
+    console.log("Level 4 = true?" + level4);
+    console.log("Level 5 = true?" + level5);
+    console.log("Level 1 = true?" + level1);
+    console.log("Level 2 = true?" + level2);
+    console.log("Level 3 = true?" + level3);
+    console.log("Level 4 = true?" + level4);
+    console.log("Level 5 = true?" + level5);
     console.log(gameEnded);
 }
+
 //Function to return data from file into N arrays of strings (One per question)
 
 function returnQAnswers() {
@@ -673,16 +828,12 @@ function returnQAnswers() {
     let newList = [];
     let tempList;
 
-
-
     for (let i = 0; i < Object.keys(data).length; i++) {
         // for (key in datakeys) {
         let datavalues = data[Object.keys(data)[i]];
         for (const values in datavalues) {
             qaList.push(`${datavalues[values]}`);
         }
-
-
 
     }
     for (const value in qaList) {
@@ -715,30 +866,34 @@ function returnQAnswers() {
             cAnswer3 = pairQ3[i];
             pairQ3[i] = pairQ3[i].replace('*', '');
         }
-
-        for (let i = 0; i < pairQ4.length; i++) {
-            if (pairQ4[i].indexOf('*') > -1) {
-                cAnswer4 = pairQ4[i];
-                pairQ4[i] = pairQ4[i].replace('*', '');
-            }
+    }
+    for (let i = 0; i < pairQ4.length; i++) {
+        if (pairQ4[i].indexOf('*') > -1) {
+            cAnswer4 = pairQ4[i];
+            pairQ4[i] = pairQ4[i].replace('*', '');
         }
-        for (let i = 0; i < pairQ5.length; i++) {
-            if (pairQ5[i].indexOf('*') > -1) {
-                cAnswer5 = pairQ5[i];
-                pairQ5[i] = pairQ5[i].replace('*', '');
-            }
+    }
+    for (let i = 0; i < pairQ5.length; i++) {
+        if (pairQ5[i].indexOf('*') > -1) {
+            cAnswer5 = pairQ5[i];
+            pairQ5[i] = pairQ5[i].replace('*', '');
         }
-
-
-
-        // console.log(pairQ1);
-        // console.log(pairQ2);
-        // console.log(pairQ3);
-        // console.log(pairQ4);
     }
 
+
+
+    // console.log(pairQ1);
+    // console.log(pairQ2);
+    // console.log(pairQ3);
+    // console.log(pairQ4);
+
+
 }
-//messages 1 through 4 are parameters from the data object
+
+
+
+
+//Function to create Question Sprites from Inputted Questions
 function getQandA(m1, m2, m3, q) {
 
     board1 = new PIXI.Text(m1.toString(), style3);
@@ -747,24 +902,24 @@ function getQandA(m1, m2, m3, q) {
     question = new PIXI.Text(q.toString(), style3);
 
     board1.position.set(800, 0);
-    //  board1.rotation = 20
     board2.position.set(800, 300);
     board3.position.set(800, 600);
     question.position.set(500, 200);
-    // console.log(scoreCounter);
-    // console.log(typeof (m1, m2, m3, q))
+
     bContainer.addChild(board1);
     bContainer.addChild(board2);
     bContainer.addChild(board3);
     bContainer.addChild(question);
-    console.log(board1.text, board2.text, board3.text, question.text);
+    // console.log(board1.text, board2.text, board3.text, question.text);
+    // console.log("boards: ", board1, "boards2" + board2);
     return board1, board2, board3, question;
 }
 
 function updateQandA(m1, m2, m3, q) {
-
-    // console.log(board1, board2, board3, question)
-    board1.visible
+    bContainer.visible = true;
+    console.log("bcontainer.visible = " + bContainer.visible);
+    console.log("board1 =" + board1);
+    board1.visible = true;
     board2.visible = true;
     board3.visible = true;
     question.visible = true;
@@ -772,36 +927,15 @@ function updateQandA(m1, m2, m3, q) {
     board2.text = m2.toString();
     board3.text = m3.toString();
     question.text = q.toString();
+
+
 }
 
 
-// for (var i = 0; i < scores.length; i++) {
-//     myHScore.text += scores[i] + "                      "
-// }
-// // myHScore.text = "High Scores " + scores 
-// // myHScore.sort;
-// scoreCounter = 0;
-//TEXT: HIGH SCORE
-let myHScore = new PIXI.Text("", style2);
 
-myHScore.position.set(1400, 300);
-myHScore.style.wordWrap = true;
-myHScore.style.wordWrapWidth = 300;
-myHScore.style.align = 'center';
-myHScore.visible = false;
-sContainer.addChild(myHScore);
 
-sContainer.interactive = true;
-sContainer.buttonMode = true;
-app.renderer.plugins.interaction.defaultCursorStyle = 'inherit';
+//ALL BUTTON LOGIC
 
-// LOADING... CONTAINER: LCONTAINER
-
-const lContainer = new PIXI.Container();
-
-// BACKGROUND TEXTURE
-// const bkg = PIXI.Texture.from('../Game Files/Sprites/backgroundItems/BackgroundItems/Final/MidOceanB.png');
-// container.addChild(char2Sprite);
 
 // START BUTTON
 
@@ -824,272 +958,19 @@ button1.interactive = true;
 button1.buttonMode = true;
 
 button1
-    // Mouse & touch events are normalized into
-    // the pointer* events for handling different
-    // button1 events.
+
     .on('pointerdown', onButtonDown)
     .on('pointerup', onButtonUp)
     .on('pointerupoutside', onButtonUp)
     .on('pointerover', onButtonOver)
     .on('pointerout', onButtonOut);
 
-// Use mouse-only events
-// .on('mousedown', onButtonDown)
-// .on('mouseup', onButtonUp)
-// .on('mouseupoutside', onButtonUp)
-// .on('mouseover', onButtonOver)
-// .on('mouseout', onButtonOut)
-
-// Use touch-only events
-// .on('touchstart', onButtonDown)
-// .on('touchend', onButtonUp)
-// .on('touchendoutside', onButtonUp)
 
 // add it to the stage
 sContainer.addChild(button1);
-const buttonSFX = new Howl({
-    src: ['../Game Files/Music/SFX/mixkit-quick-positive-video-game-notification-interface-265.wav']
-});
-function toggleFlag(value) {
-    var toggle = value ? false : true
-    return toggle;
-
-
-}
-
-function onButtonDown() {
-
-    this.isdown = true;
-
-    if (this == button1) {
-        xContainer.addChild(myLevel);
-        myLevel.visible = false;
-        returnQAnswers();
-
-        pairQuestions.push(pairQ1, pairQ2, pairQ3, pairQ4, pairQ5);
-        correctAnswers.push(cAnswer1, cAnswer2, cAnswer3, cAnswer4, cAnswer5);
-        console.log(pairQ1, pairQ2, cAnswer1, cAnswer2);
-
-        console.log("correctAnswers.length" + correctAnswers.length);
-        console.log("levels.length" + levels.length);
-        console.log(pairQ1.length)
-
-        this.texture = startButton;
-        sContainer.visible = false;
-        loadingSprite.visible = true;
-        player.visible = true;
-        delayStart = true;
-        bkg.visible = false;
-        bkg2.visible = true;
-        myInfo.visible = true;
-        player.position.set(app.view.width / 2, app.view.height / 2);
-
-        setTimeout(function () {
-            gmContainer.visible = true;
-            buttonStarted = true;
-            loadingSprite.visible = false;
-            myInfo.visible = false;
-            //Score should be visible and update when question is answered correctly
-            score.visible = true;
-            createHookQs();
-            myLevel.visible = true;
-        }, 4000);
-
-
-    } else if (this == button2) {
-        this.texture = hscoreButton;
-        myHScore.visible = toggleFlag(myHScore.visible);
-    } else if (this == button3) {
-        // removeHookQs();
-        miniRemoveHQs();
-        this.texture = homeButton;
-        gmContainer.visible = false;
-        sContainer.visible = true;
-        goContainer.visible = false;
-        bContainer.visible = false;
-    } else if (this == button4) {
-        miniOnGameEnd();
-        miniRemoveHQs();
-        goContainer.visible = false;
-        bContainer.visible = false;
-        this.texture = resetButton;
-        xContainer.addChild(myLevel);
-        myLevel.visible = false;
-        returnQAnswers();
-
-
-        pairQuestions.push(pairQ1, pairQ2, pairQ3, pairQ4, pairQ5);
-        correctAnswers.push(cAnswer1, cAnswer2, cAnswer3, cAnswer4, cAnswer5);
-        console.log(pairQ1, pairQ2, cAnswer1, cAnswer2);
-        console.log("correctAnswers.length" + correctAnswers.length);
-        console.log("levels.length" + levels.length);
-
-        loadingSprite.visible = true;
-        player.visible = true;
-        delayStart = true;
-        bkg.visible = false;
-        bkg2.visible = true;
-        myInfo.visible = true;
-        player.position.set(app.view.width / 2, app.view.height / 2);
-
-        setTimeout(function () {
-            gmContainer.visible = true;
-            buttonStarted = true;
-            loadingSprite.visible = false;
-            myInfo.visible = false;
-            //Score should be visible and update when question is answered correctly
-            score.visible = true;
-            createHookQs();
-            myLevel.visible = true;
-            gameEnded = false;
-
-        }, 4000);
 
 
 
-    } else if (this == button5) {
-        miniRemoveHQs();
-
-        this.texture = homeButton2;
-        gmContainer.visible = false;
-        sContainer.visible = true;
-        goContainer.visible = false;
-        bContainer.visible = false;
-
-
-    } else if (this == button6) {
-
-        miniRemoveHQs();
-        goContainer.visible = false;
-        bContainer.visible = false;
-        this.texture = resetButton2;
-
-        xContainer.addChild(myLevel);
-        myLevel.visible = false;
-        console.log("correctAnswers.length" + correctAnswers.length);
-        console.log("levels.length" + levels.length);
-        console.log(pairQ1.length)
-        returnQAnswers();
-        pairQuestions.push(pairQ1, pairQ2, pairQ3, pairQ4);
-        correctAnswers.push(cAnswer1, cAnswer2, cAnswer3, cAnswer4);
-        console.log(pairQ1, pairQ2, cAnswer1, cAnswer2);
-
-
-        loadingSprite.visible = true;
-        player.visible = true;
-        delayStart = true;
-        bkg.visible = false;
-        bkg2.visible = true;
-        myInfo.visible = true;
-        player.position.set(app.view.width / 2, app.view.height / 2);
-
-
-        setTimeout(function () {
-            gmContainer.visible = true;
-            buttonStarted = true;
-            loadingSprite.visible = false;
-            myInfo.visible = false;
-            //Score should be visible and update when question is answered correctly
-            score.visible = true;
-            createHookQs();
-            myLevel.visible = true;
-            gameEnded = false;
-
-        }, 4000);
-
-    } else if (this == nftButton) {
-
-        this.texture = viewButton;
-        popupContainer.visible = toggleFlag(popupContainer.visible);
-    }
-    buttonSFX.play();
-
-    this.alpha = 1;
-}
-
-function onButtonUp() {
-    this.isdown = false;
-    if (this.isOver) {
-        if (this == button1) {
-            this.texture = startButton;
-        } else if (this == button2) {
-            this.texture = hscoreButton;
-        } else if (this == button3) {
-            this.texture = homeButton;
-        } else if (this == button4) {
-            this.texture = resetButton;
-        } else if (this == button5) {
-            this.texture = homeButton2;
-        } else if (this == button6) {
-            this.texture = resetButton2;
-        } else if (this == nftButton) {
-            this.texture = viewButton
-        }
-    }
-    else {
-        if (this == button1) {
-            this.texture = startButton;
-        } else if (this == button2) {
-            this.texture = hscoreButton;
-        } else if (this == button3) {
-            this.texture = homeButton;
-        } else if (this == button4) {
-            this.texture = resetButton;
-        } else if (this == button5) {
-            this.texture = homeButton2;
-        } else if (this == button6) {
-            this.texture = resetButton2;
-        } else if (this == nftButton) {
-            this.texture = viewButton
-        }
-
-    }
-}
-
-function onButtonOver() {
-    this.isOver = true;
-    if (this.isdown) {
-        return;
-    }
-    if (this == button1) {
-        this.texture = startButtonOver;
-    } else if (this == button2) {
-        this.texture = hscoreButtonOver;
-    } else if (this == button3) {
-        this.texture = homeButtonOver;
-    } else if (this == button4) {
-        this.texture = resetButtonOver;
-    } else if (this == button5) {
-        this.texture = homeButtonOver2;
-    } else if (this == button6) {
-        this.texture = resetButtonOver2;
-    } else if (this == nftButton) {
-        this.texture = viewButtonOver
-    }
-
-}
-
-function onButtonOut() {
-    this.isOver = false;
-    if (this.isdown) {
-        return;
-    }
-    if (this == button1) {
-        this.texture = startButton;
-    } else if (this == button2) {
-        this.texture = hscoreButton;
-    } else if (this == button3) {
-        this.texture = homeButton;
-    } else if (this == button4) {
-        this.texture = resetButton;
-    } else if (this == button5) {
-        this.texture = homeButton2;
-    } else if (this == button6) {
-        this.texture = resetButton2;
-    } else if (this == nftButton) {
-        this.texture = viewButton
-    }
-}
 
 // HIGH SCORE BUTTON
 
@@ -1121,10 +1002,7 @@ button2
 
 sContainer.addChild(button2);
 
-// GAME MENU CONTAINER: GMCONTAINER
 
-const gmContainer = new PIXI.Container();
-gmContainer.visible = false;
 // HOME BUTTON
 
 const homeButton = PIXI.Texture.from('../Game Files/Sprites/GameSprites/Home2.png')
@@ -1192,20 +1070,6 @@ button4
 gmContainer.addChild(button4);
 
 
-//GAME OVER - RECTANGLE
-const gameoverRect = new Graphics();
-gameoverRect.beginFill(0x008B8B)
-    .lineStyle(4, 0xFFFFFF, 1)
-    .drawRect(700, 100, 400, 500)
-    .endFill();
-
-
-//GAME WIN - RECTANGLE
-const gamewinRect = new Graphics();
-gamewinRect.beginFill(0xFFFFFF)
-    .lineStyle(4, 0x000000, 3)
-    .drawRect(700, 100, 400, 500)
-    .endFill();
 
 
 // GAME OVER - HOME BUTTON
@@ -1264,55 +1128,8 @@ button6
 
 
 
-//NFT WORK HERE
-const popupContainer = new PIXI.Container();
-const popupInfo = new PIXI.Text('Your NFTs:', style2);
-popupInfo.position.set(680, 530);
-popupInfo.style.wordWrap = false;
-// myNFTInfo.style.wordWrapWidth = 200;
-popupInfo.style.align = 'center';
 
 
-const myNFTName = new PIXI.Text(fishName.toString() + fishTypes[0], style2);
-myNFTName.position.set(680, 600);
-myNFTName.style.wordWrap = false;
-// myNFTInfo.style.wordWrapWidth = 200;
-myNFTName.style.align = 'center';
-myNFTName.visible = false;
-
-console.log("fishName is: " + fishName.toString());
-
-
-
-const nftContainer = new PIXI.Container();
-
-
-const myNFTInfo = new PIXI.Text('Earn NFTs to trade in-game.', style2);
-myNFTInfo.position.set(680, 300);
-myNFTInfo.style.wordWrap = false;
-// myNFTInfo.style.wordWrapWidth = 200;
-myNFTInfo.style.align = 'center';
-
-
-
-
-
-
-const nftRect = new Graphics();
-nftRect.beginFill(0x008B8B)
-    .lineStyle(4, 0xFFFFFF, 1)
-    .drawRect(550, 500, 700, 300)
-    .endFill();
-    
-
-
-
-popupContainer.addChild(nftRect);
-popupContainer.addChild(popupInfo);
-popupContainer.addChild(myNFTName);
-popupContainer.visible = false;
-const viewButton = PIXI.Texture.from('../Game Files/Sprites/GameSprites/NFTs/viewNfTs.png')
-const viewButtonOver = PIXI.Texture.from('../Game Files/Sprites/GameSprites/NFTs/viewNfTsClicked.png')
 
 const nftButton = new PIXI.Sprite(viewButton);
 
@@ -1321,7 +1138,7 @@ nftButton.buttonMode = true;
 
 nftButton.anchor.set(0.5);
 nftButton.x = 920;
-nftButton.y = 420;
+nftButton.y = 440;
 
 // make the button interactive...
 nftButton.interactive = true;
@@ -1337,11 +1154,269 @@ nftButton
     .on('pointerover', onButtonOver)
     .on('pointerout', onButtonOut);
 
-// NFT DISPLAY CONTAINER: nftContainer
 
 nftContainer.addChild(myNFTInfo);
 
 nftContainer.addChild(nftButton);
+
+
+
+
+function onButtonDown() {
+
+    this.isdown = true;
+
+    if (this == button1) {
+        this.texture = startButton;
+        if (typeof(data) == 'undefined') {
+            alert("Please enter a valid CSV file!")
+        } else {
+
+            gameEnded = false;
+            xContainer.addChild(myLevel);
+            myLevel.visible = false;
+            returnQAnswers();
+
+            pairQuestions.push(pairQ1, pairQ2, pairQ3, pairQ4, pairQ5);
+            correctAnswers.push(cAnswer1, cAnswer2, cAnswer3, cAnswer4, cAnswer5);
+            // console.log(pairQ1, pairQ2, cAnswer1, cAnswer2);
+
+            console.log("correctAnswers.length" + correctAnswers.length);
+            console.log("levels.length" + levels.length);
+            console.log(pairQ1.length)
+
+            
+            sContainer.visible = false;
+            loadingSprite.visible = true;
+            player.visible = true;
+            delayStart = true;
+            bkg.visible = false;
+            bkg2.visible = true;
+            myInfo.visible = true;
+            nftContainer.visible = false;
+            popupContainer.visible = false;
+            
+
+            player.position.set(app.view.width / 2, app.view.height / 2);
+
+            setTimeout(function () {
+                gmContainer.visible = true;
+                buttonStarted = true;
+                loadingSprite.visible = false;
+                myInfo.visible = false;
+                //Score should be visible and update when question is answered correctly
+                score.visible = true;
+                createHookQs();
+                myLevel.visible = true;
+            }, 4000);
+
+        }
+    } else if (this == button2) {
+        this.texture = hscoreButton;
+        myHScore.visible = toggleFlag(myHScore.visible);
+    } else if (this == button3) {
+        miniRemoveHQs();
+        this.texture = homeButton;
+        gmContainer.visible = false;
+        sContainer.visible = true;
+        nftContainer.visible = true;
+        popupContainer.visible = false;
+
+        goContainer.visible = false;
+        bContainer.visible = false;
+        nftContainer.visible = true;
+        popupContainer.visible = true;
+    } else if (this == button4) {
+        miniOnGameEnd();
+        miniRemoveHQs();
+        goContainer.visible = false;
+        bContainer.visible = false;
+        this.texture = resetButton;
+        xContainer.addChild(myLevel);
+        myLevel.visible = false;
+        returnQAnswers();
+
+        pairQuestions.push(pairQ1, pairQ2, pairQ3, pairQ4, pairQ5);
+        correctAnswers.push(cAnswer1, cAnswer2, cAnswer3, cAnswer4, cAnswer5);
+        console.log(pairQ1, pairQ2, cAnswer1, cAnswer2);
+        console.log("correctAnswers.length" + correctAnswers.length);
+        console.log("levels.length" + levels.length);
+
+        loadingSprite.visible = true;
+        player.visible = true;
+        delayStart = true;
+        bkg.visible = false;
+        bkg2.visible = true;
+        myInfo.visible = true;
+        player.position.set(app.view.width / 2, app.view.height / 2);
+
+        setTimeout(function () {
+
+            gmContainer.visible = true;
+            buttonStarted = true;
+            loadingSprite.visible = false;
+            myInfo.visible = false;
+            //Score should be visible and update when question is answered correctly
+            score.visible = true;
+            createHookQs();
+            myLevel.visible = true;
+            gameEnded = false;
+
+        }, 4000);
+
+
+
+    } else if (this == button5) {
+        miniRemoveHQs();
+
+        this.texture = homeButton2;
+        gmContainer.visible = false;
+        sContainer.visible = true;
+        nftContainer.visible = true;
+        popupContainer.visible = false;
+        goContainer.visible = false;
+        bContainer.visible = false;
+
+
+    } else if (this == button6) {
+
+        miniRemoveHQs();
+        goContainer.visible = false;
+        bContainer.visible = false;
+        this.texture = resetButton2;
+
+        xContainer.addChild(myLevel);
+        myLevel.visible = false;
+        console.log("correctAnswers.length" + correctAnswers.length);
+        console.log("levels.length" + levels.length);
+        console.log(pairQ1.length)
+        returnQAnswers();
+        pairQuestions.push(pairQ1, pairQ2, pairQ3, pairQ4);
+        correctAnswers.push(cAnswer1, cAnswer2, cAnswer3, cAnswer4);
+        console.log(pairQ1, pairQ2, cAnswer1, cAnswer2);
+
+
+        loadingSprite.visible = true;
+        player.visible = true;
+        delayStart = true;
+        bkg.visible = false;
+        bkg2.visible = true;
+        myInfo.visible = true;
+        player.position.set(app.view.width / 2, app.view.height / 2);
+
+
+        setTimeout(function () {
+            gmContainer.visible = true;
+            buttonStarted = true;
+            loadingSprite.visible = false;
+            myInfo.visible = false;
+            //Score should be visible and update when question is answered correctly
+            score.visible = true;
+            createHookQs();
+            myLevel.visible = true;
+            gameEnded = false;
+
+        }, 4000);
+
+    } else if (this == nftButton) {
+
+        this.texture = viewButton;
+        popupContainer.visible = toggleFlag(popupContainer.visible);
+    }
+    buttonSFX.play();
+
+    this.alpha = 1;
+}
+
+
+//Function when Button is Released
+function onButtonUp() {
+    this.isdown = false;
+    if (this.isOver) {
+        if (this == button1) {
+            this.texture = startButton;
+        } else if (this == button2) {
+            this.texture = hscoreButton;
+        } else if (this == button3) {
+            this.texture = homeButton;
+        } else if (this == button4) {
+            this.texture = resetButton;
+        } else if (this == button5) {
+            this.texture = homeButton2;
+        } else if (this == button6) {
+            this.texture = resetButton2;
+        } else if (this == nftButton) {
+            this.texture = viewButton
+        }
+    }
+    else {
+        if (this == button1) {
+            this.texture = startButton;
+        } else if (this == button2) {
+            this.texture = hscoreButton;
+        } else if (this == button3) {
+            this.texture = homeButton;
+        } else if (this == button4) {
+            this.texture = resetButton;
+        } else if (this == button5) {
+            this.texture = homeButton2;
+        } else if (this == button6) {
+            this.texture = resetButton2;
+        } else if (this == nftButton) {
+            this.texture = viewButton
+        }
+
+    }
+}
+
+//Function when Button is Hovered Over
+
+function onButtonOver() {
+    this.isOver = true;
+    if (this.isdown) {
+        return;
+    }
+    if (this == button1) {
+        this.texture = startButtonOver;
+    } else if (this == button2) {
+        this.texture = hscoreButtonOver;
+    } else if (this == button3) {
+        this.texture = homeButtonOver;
+    } else if (this == button4) {
+        this.texture = resetButtonOver;
+    } else if (this == button5) {
+        this.texture = homeButtonOver2;
+    } else if (this == button6) {
+        this.texture = resetButtonOver2;
+    } else if (this == nftButton) {
+        this.texture = viewButtonOver
+    }
+
+}
+
+//Function when Button is not Hovered Over
+
+function onButtonOut() {
+    this.isOver = false;
+    if (this.isdown) {
+        return;
+    }
+    if (this == button1) {
+        this.texture = startButton;
+    } else if (this == button2) {
+        this.texture = hscoreButton;
+    } else if (this == button3) {
+        this.texture = homeButton;
+    } else if (this == button4) {
+        this.texture = resetButton;
+    } else if (this == button5) {
+        this.texture = homeButton2;
+    } else if (this == button6) {
+        this.texture = resetButton2;
+    } else if (this == nftButton) {
+        this.texture = viewButton
+    }
+}
 // LOADER 
 
 
@@ -1420,25 +1495,18 @@ function movePlayer(e) {
     if (delayStart == true) {
         setTimeout(function () {
 
-            // player.x = pos.x;
-
             player.y = pos.y;
-            // if (pos.x && pos.y > 0 && pos.y > 390) {
-            //     player.scale.set(pos.y * 0.0018, pos.y * 0.0018);
-            // }
+
             delayStart = false;
         }, 3000);
-        // console.log(delayStart)
+
     }
     if (buttonStarted == true) {
-        // player.x = pos.x;
+
         player.y = pos.y;
-        // if (pos.x && pos.y > 0 && pos.y > 390) {
-        //     player.scale.set(pos.y * 0.0018, pos.y * 0.0018);
-        // }
-        // console.log(delayStart)
+
     }
-    // console.log(pos.y);
+
 
 }
 // LOOP FUNCTION
@@ -1447,38 +1515,36 @@ function gameLoop(delta) {
     updateBg();
 
 }
-//ANIMATED SPRITES CONTAINER: ACONTAINER & BKG CONTAINER
-const bkgContainer = new PIXI.Container();
-const aContainer = new PIXI.Container();
+
 
 // LOADER LOOP / GAME UPDATE LOOP
 
 function updateBg() {
-    // console.log("player Y: " + player.y);
+
     myNFTName.text = fishName.toString();
-    console.log(delayStart == true)
+    // console.log(delayStart == true)
     hookPosf = (bgH / 3) + 30;
     if (buttonStarted == true) {
 
         bgH = (bgH + bgSpeed);
         scoreCounter += 1;
 
-        console.log(hookPosf);
+        // console.log(hookPosf);
         // console.log(bgH);
         // console.log("bgH counter" + bgH);
         updateScore(scoreCounter);
 
-        setTimeout(function () {
 
-            if (hooksPlay == true && moveQAs == false) {
-                if (hookQs[0].x < (app.screen.width / 2)) {
-                    console.log("hookQs x " + hookQs[0].x);
 
-                    removeHookQs();
-                }
-                // console.log(moveQAs);
+        if (hooksPlay == true && moveQAs == false) {
+            if (bgH < 2422) {
+                console.log("hookQs x " + hookQs[0].x);
+
+                removeHookQs();
             }
-        }, 1000);
+            // console.log(moveQAs);
+        }
+
         if (bgH > -1200) {
             // for (let i = 1; i < 3; i++) {
 
@@ -1495,84 +1561,88 @@ function updateBg() {
             //         }
             //     }
             if (hooksCreated == true) {
-                for (let i = 0; i < 3; i++) {
+                try {
+                    for (let i = 0; i < 3; i++) {
 
-                    if (hookQs[i].visible == true) {
-                        hookQsvis[i] = true;
-                    } else {
-                        hookQsRvis[i] = false;
+
+                        if (hookQs[i].visible == true) {
+                            hookQsvis[i] = true;
+                        } else {
+                            hookQsRvis[i] = false;
+                        }
+
+
+                        if (hookQsR[i].visible == false) {
+                            hookQsRvis[i] = true;
+                        } else {
+                            hookQsRvis[i] = false;
+                        }
+
+
                     }
-
-
-                    if (hookQsR[i].visible == false) {
-                        hookQsRvis[i] = true;
-                    } else {
-                        hookQsRvis[i] = false;
-                    }
-
-                }
-
-                for (let i = 0; i < 3; i++) {
-
-                    // console.log(hooksRemoved);
-
-
-                    hookCombo[i].x = (bgH / 3) + (30 * (i + 1));
-                    hookQs[i].x = (bgH / 3) + (30 * (i + 1));
-
-
-                    // console.log(hookCombo[i]);
-                    // console.log("HookCombo Pos: " + hookCombo[i].x);
-
-
-
-                }
-
-                if (moveQAs == true) {
 
                     for (let i = 0; i < 3; i++) {
-                        // console.log("HookQsR Pos: " + hookQsR[i].x);
-                        hookQsR[i].x = (bgH / 3) + (30 * (i + 1)) - 90;
-                        hookQsW[i].x = (bgH / 3) + (30 * (i + 1)) - 90;
+
+                        // console.log(hooksRemoved);
+
+
+                        hookCombo[i].x = (bgH / 3) + (30 * (i + 1));
+                        hookQs[i].x = (bgH / 3) + (30 * (i + 1));
+
+
+                        // console.log(hookCombo[i]);
+                        // console.log("HookCombo Pos: " + hookCombo[i].x);
+
+
+
                     }
-                    // console.log("hookQsR Pos:" + hookQsR[0].x + 40);
-                }
-                if (checker(hookQsvis)) {
-                    console.log("QSvis" + checker(hookQsvis));
-                    bContainer.visible = true;
-                    board1.visible = true;
-                    board2.visible = true;
-                    board3.visible = true;
-                    question.visible = true;
 
-                    board1.x = hookQs[0].x + 40;
-                    board2.x = hookQs[1].x + 40;
-                    board3.x = hookQs[2].x + 40;
+                    if (moveQAs == true) {
 
-                    board1.y = hookQs[0].y + 40;
-                    board2.y = hookQs[1].y + 40;
-                    board3.y = hookQs[2].y + 40;
-                }
-                else if (checker(hookQsRvis)) {
-                    console.log("QsRvis" + checker(hookQsRvis));
-                    bContainer.visible = true;
+                        for (let i = 0; i < 3; i++) {
+                            // console.log("HookQsR Pos: " + hookQsR[i].x);
+                            hookQsR[i].x = (bgH / 3) + (30 * (i + 1)) - 90;
+                            hookQsW[i].x = (bgH / 3) + (30 * (i + 1)) - 90;
+                        }
+                        // console.log("hookQsR Pos:" + hookQsR[0].x + 40);
+                    }
+                    if (checker(hookQsvis)) {
+                        console.log("QSvis" + checker(hookQsvis));
+                        bContainer.visible = true;
+                        board1.visible = true;
+                        board2.visible = true;
+                        board3.visible = true;
+                        question.visible = true;
 
-                    board1.visible = true;
-                    board2.visible = true;
-                    board3.visible = true;
-                    question.visible = true;
+                        board1.x = hookQs[0].x + 40;
+                        board2.x = hookQs[1].x + 40;
+                        board3.x = hookQs[2].x + 40;
 
-                    board1.x = hookQsR[0].x + 130;
-                    board2.x = hookQsR[1].x + 130;
-                    board3.x = hookQsR[2].x + 130;
+                        board1.y = hookQs[0].y + 40;
+                        board2.y = hookQs[1].y + 40;
+                        board3.y = hookQs[2].y + 40;
+                    }
+                    else if (checker(hookQsRvis)) {
+                        // console.log("QsRvis" + checker(hookQsRvis));
+                        bContainer.visible = true;
 
-                    // board1.y = hookQsR[0].y + 40;
-                    // board2.y = hookQsR[1].y + 40;
-                    // board3.y = hookQsR[2].y + 40;
+                        board1.visible = true;
+                        board2.visible = true;
+                        board3.visible = true;
+                        question.visible = true;
 
-                } else {
+                        board1.x = hookQsR[0].x + 130;
+                        board2.x = hookQsR[1].x + 130;
+                        board3.x = hookQsR[2].x + 130;
 
-                }
+                        // board1.y = hookQsR[0].y + 40;
+                        // board2.y = hookQsR[1].y + 40;
+                        // board3.y = hookQsR[2].y + 40;
+                    }
+                } catch (err) { }
+            } else {
+
+
 
 
                 // console.log("HookQs Position: " + hookQs[0].x);
@@ -1683,7 +1753,9 @@ function updateBg() {
 function checkAnswer() {
     // for (let i = 1; i < 5; i++) {
     console.log("HookQs Pos: " + hookQs[0].x);
-    console.log("bgX" + bgX)
+    console.log("bgH " + bgH)
+
+    console.log("bgX " + bgX)
     if (hookQs[0].x < (app.screen.width / 2)) {
         for (let i = 0; i < correctAnswers.length; i++) {
             if (levels[i] == true) {
@@ -1753,6 +1825,7 @@ function resetDataPairs() {
 }
 
 function removeQBoards() {
+
     for (let i = 0; i < 3; i++) {
 
         xContainer.removeChild(hookUp[i]);
@@ -1873,7 +1946,9 @@ function checkAnsColor() {
 
 // FUNCTION TO REMOVE HOOKS: REMOVEHOOKQS()
 function removeHookQs() {
+
     // Hook Logic
+    hooksPlay = false;
     moveQAs = true;
     board1.visible = true;
     board2.visible = true;
@@ -1897,14 +1972,18 @@ function removeHookQs() {
         hookQsW[i].visible = true;
         hookUp[i].visible = true;
 
+        hookUp[i].loop = false;
         hookUp[i].play();
 
         console.log("Animating question board");
 
+
+        hookQsR[i].loop = false;
         hookQsR[i].play();
 
 
 
+        hookQsW[i].loop = false;
         hookQsW[i].play();
 
 
@@ -1924,12 +2003,12 @@ function removeHookQs() {
 
         checkAnsColor();
         checkAnswer();
-        returnLevel();
+
 
 
         console.log(gameEnded);
 
-        hooksPlay = false;
+
     } else {
         onGameEnd();
     }
@@ -1941,58 +2020,10 @@ function removeHookQs() {
 function createHookQs() {
     console.log(gameEnded);
 
-    //Text Logic
-    // if (level1) {
 
-    //     getQandA(pairQ1[0], pairQ1[1], pairQ1[2], pairQ1[3]);
-    // }
-    // else if (level2) {
-    //     getQandA(pairQ2[0], pairQ2[1], pairQ2[2], pairQ2[3]);
-    // } else if (level3) {
-    //     getQandA(pairQ3[0], pairQ3[1], pairQ3[2], pairQ3[3]);
-    // } else if (level4) {
-    //     getQandA(pairQ4[0], pairQ4[1], pairQ4[2], pairQ4[3]);
-    // } else { }
-
-
-
-    //Hook incrementer = level incrementer
-
-
-
-
-
-    // console.log("Hooks called = " + hooksCalled);
-    // // returnLevel();
-    // console.log("Level 1 = true?" + level1);
-    // console.log("Level 2 = true?" + level2);
-    // console.log("Level 3 = true?" + level3);
-    // console.log("Level 4 = true?" + level4);
-    // console.log("Level 5 = true?" + level5);
-    // console.log("Level 1 = true?" + level1);
-    // console.log("Level 2 = true?" + level2);
-    // console.log("Level 3 = true?" + level3);
-    // console.log("Level 4 = true?" + level4);
-    // console.log("Level 5 = true?" + level5);
-
-    // if (level1) {
-
-    //     getQandA("0", "1", "2", "3");
-    // }
-    // else if (level2) {
-    //     getQandA("1", "2", "3", "4");
-    // } else if (level3) {
-    //     getQandA("5", "6", "7", "8");
-    // } else if (level4) {
-    //     getQandA("9", "10", "11", "12");
-    // } else if (level5) {
-    //     getQandA("9", "10", "11", "12");
-    // }
-
-
-    // moveQAs = false;
 
     // Blank Question Board Creation
+
     hookPlay();
     console.log("Hooks created!");
     const hkDTextures = [];
@@ -2008,7 +2039,7 @@ function createHookQs() {
         const hookQ = new PIXI.Sprite.from(hqTexture);
         hookQ.position.set(1300 + (30 * (i + 1)), -200 + (300 * (i + 1)));
         hookQ.scale.set(0.5, 0.5);
-        // hook.animationSpeed  = 1 + (0.2 * i);
+
         hookQ.visible = false;
         hookQs.push(hookQ);
 
@@ -2017,26 +2048,26 @@ function createHookQs() {
     }
 
     // Hook Creation
+
     for (let i = 0; i < 3; i++) {
         const hook = new PIXI.AnimatedSprite(hkDTextures);
         hook.visible = false;
         console.log(typeof (hook));
         hook.position.set(1300 + (30 * (i + 1)), -1350 + (300 * (i + 1)));
-
+        // hook.loop = false;
+        // hook.onLoop = function () {
+        //     hook.loop = false;
+        //     // hook.stop();
+        // }
         hook.scale.set(1.5, 1.5);
         hook.animationSpeed = 1 + (0.1 * (i + 1));
-        // hook.animationSpeed  = 1 + (0.2 * i);
 
-        // hook.play();
-        // hook.loop = false;
         hookCombo.push(hook);
 
         xContainer.addChild(hookCombo[i]);
-        // console.log(hook.position);
-        // setTimeout(function() {
-        //     hook.pause()}, 1000)
+
     }
-    // setTimeout(function () {
+
     for (let i = 0; i < 3; i++) {
 
 
@@ -2045,8 +2076,7 @@ function createHookQs() {
 
 
     }
-    // }, 400);
-    // FORMERLY REMOVEHOOKQS FUNCTION 
+
 
     const hkUTextures = [];
     const hQRTextures = [];
@@ -2067,7 +2097,7 @@ function createHookQs() {
         hQWTextures.push(hQWTexture);
     }
 
-    // console.log(player.y)
+
 
     for (let i = 0; i < 3; i++) {
 
@@ -2077,27 +2107,33 @@ function createHookQs() {
         hook.scale.set(1.5, 1.5);
         hook.animationSpeed = 1 + (0.1 * i);
         hook.loop = false;
-        // hook.animationSpeed  = 1 + (0.2 * i);
+        // hook.onLoop = function () {
+        //     hook.loop = false;
+        //     // hook.stop();
+        // }
+
         hook.visible = false;
         hookUp.push(hook);
         xContainer.addChild(hookUp[i]);
 
-
-        // setTimeout(function() {
-        //     hook.pause()}, 1000)
     }
     for (let i = 0; i < 3; i++) {
-        // console.log("Animating question board");
+
         const hookQR = new PIXI.AnimatedSprite(hQRTextures);
         hookQR.position.set(app.screen.width + 500, -300 + (300 * (i + 1)) + 40);
         hookQR.scale.set(0.5, 0.5);
         hookQR.animationSpeed = 0.9 + (0.1 * (i + 1));
         hookQR.visible = false;
-        hookQR.loop = false;
+        // hookQR.loop = false;
+        // hookQR.onLoop = function () {
+        //     // hookQR.stop();
+        //     hookQR.loop = false;
+
+        // }
         hookQsR.push(hookQR);
 
         xContainer.addChild(hookQsR[i]);
-        // hookQR.visible = false;
+
 
 
         const hookQW = new PIXI.AnimatedSprite(hQWTextures);
@@ -2105,28 +2141,18 @@ function createHookQs() {
         hookQW.scale.set(0.5, 0.5);
         hookQW.animationSpeed = 0.9 + (0.1 * (i + 1));
         hookQW.visible = false;
-        hookQW.loop = false;
+        // hookQW.loop = false;
+        // hookQW.onLoop = function () {  
+        // //  hookQW.stop();
+        //     hookQW.loop = false;
+
+        // }
+
         hookQsW.push(hookQW);
 
         xContainer.addChild(hookQsW[i]);
 
 
-        // hookQW.visible = false;
-
-
-        // xContainer.addChild(hookQsW[i - 1]);
-
-
-
-        // if (between(player.y, 104, 264)) {
-
-
-
-        // }
-        // else if (between(player.y, -750, -450)) {
-
-        // }
-        // else if (between(player.y, -450, -150)) { }
     }
 
 
@@ -2143,110 +2169,87 @@ function createHookQs() {
 }
 
 function hookPlay() {
-    if (hooksCreated == false) {
-        hooksCalled += 1;
-
-        console.log("Hooks called = " + hooksCalled);
-
-        returnLevel();
-        console.log("Level 1 = true?" + level1);
-        console.log("Level 2 = true?" + level2);
-        console.log("Level 3 = true?" + level3);
-        console.log("Level 4 = true?" + level4);
-        console.log("Level 5 = true?" + level5);
-        console.log("Level 1 = true?" + level1);
-        console.log("Level 2 = true?" + level2);
-        console.log("Level 3 = true?" + level3);
-        console.log("Level 4 = true?" + level4);
-        console.log("Level 5 = true?" + level5);
-        moveQAs = false;
+    moveQAs = false;
+    if (hooksCreated == false && hooksCalled == 0) {
+        // hooksCalled += 1;
 
 
 
-        if (level1) {
+        getQandA("0", "1", "2", "3");
+        console.log("got Q&As");
 
-            getQandA("0", "1", "2", "3");
-        }
-        else if (level2) {
-            getQandA("1", "2", "3", "4");
-        } else if (level3) {
-            getQandA("5", "6", "7", "8");
-        } else if (level4) {
-            getQandA("9", "10", "11", "12");
-        } else if (level5) {
-            getQandA("9", "10", "11", "12");
-        }
+
     }
     if (hooksCreated == true) {
 
-        for (let i = 0; i < levels.length; i++) {
-            if (levels[i] == true) {
-                myLevel.text = "Level: " + (i + 1);
-                console.log(myLevel.text + " Loaded")
-            }
-        }
-        // if (levels[0] == false) {
-        //     console.log("Not Level 1 = " + levels[0] )
 
-        //     returnLevel();
-        // }
-
-        // if (hooksCalled < 5) {
-        //     hooksCalled += 1;
-        // }
 
         for (let i = 0; i < 3; i++) {
-            // hookQs[i].position.set(1300 + (30 * (i + 1)), -200 + (300 * (i + 1)));
-            // hookQs[i].scale.set(0.5, 0.5);
+
+            hookQsR[i].visible = false;
+            hookQsW[i].visible = false;
             hookQs[i].visible = true;
 
-            // xContainer.addChild(hookQs[i]);
+
         }
 
         // Replaying Hooks
         for (let i = 0; i < 3; i++) {
 
 
-
-            // hookCombo[i].position.set(1300 + (30 * (i + 1)), -1350 + (300 * (i + 1)));
-
-            // hookCombo[i].scale.set(1.5, 1.5);
-            // hookCombo[i].animationSpeed = 1 + (0.1 * (i + 1));
-            hookCombo[i].visible = true;
-            hookCombo[i].play();
             hookCombo[i].loop = false;
 
+            hookCombo[i].visible = true;
+            hookCombo[i].play();
 
-            // xContainer.addChild(hookCombo[i]);
 
 
         }
         hooksRemoved = false;
         moveQAs = false;
+        console.log("# of Hooks Called: " + hooksCalled);
+        if (hooksCalled == 0) {
+            hooksCalled += 1;
+            returnLevel();
+
+        } else if (hooksCalled > 0) {
+            hooksCalled += 1;
+            returnLevel();
+        }
+
+        console.log("# of Hooks Called now: " + hooksCalled);
+
+        for (let i = 0; i < levels.length - 1; i++) {
+            if (levels[i] == true) {
+                myLevel.text = "Level: " + (i + 1);
+                console.log(myLevel.text + " Loaded")
+            }
+
+        }
+        let fn = levels.length - 1
+        bossLevel = levels[fn]
+        if (bossLevel == true) {
+            myLevel.text = "Level " + levels.length + " : Boss Level "
+            correct.text = correctAnswers[correctAnswers.length - 1].replace('*', '') + " is Correct! You won an NFT in your inventory!"
+        }
+
         if (level1) {
             console.log(pairQ1[0], pairQ1[1], pairQ1[2], pairQ1[3]);
-            // updateQandA("0", "1", "3", "4");
             updateQandA(pairQ1[0], pairQ1[1], pairQ1[2], pairQ1[3]);
             bgSpeed += 5
 
 
         }
         else if (level2) {
-            console.log(pairQ2[0], pairQ2[1], pairQ2[2], pairQ2[3]);
-            // updateQandA("1updated", "2up", "3up", "4up");
+
             updateQandA(pairQ2[0], pairQ2[1], pairQ2[2], pairQ2[3]);
 
         } else if (level3) {
-            console.log(pairQ3[0], pairQ3[1], pairQ3[2], pairQ3[3]);
-            // updateQandA("5updated", "6up", "7up", "8up");
+
             updateQandA(pairQ3[0], pairQ3[1], pairQ3[2], pairQ3[3]);
         } else if (level4) {
-            console.log(pairQ4[0], pairQ4[1], pairQ4[2], pairQ4[3]);
-            // updateQandA("9updated", "10up", "11up", "12up");
             updateQandA(pairQ4[0], pairQ4[1], pairQ4[2], pairQ4[3]);
         } else if (level5) {
-            console.log(pairQ5[0], pairQ5[1], pairQ5[2], pairQ5[3]);
-            // updateQandA("9updated", "10up", "11up", "12up");
             updateQandA(pairQ5[0], pairQ5[1], pairQ5[2], pairQ5[3]);
             bgSpeed += 10
         }
@@ -2254,20 +2257,9 @@ function hookPlay() {
 
 
 
-        if (hooksCalled < 6) {
-            hooksCalled += 1;
-        }
+
         hooksPlay = true;
         console.log(gameEnded);
-
-
-        // for (let i = 0; i < 3; i++) {
-        //     setTimeout(function () {
-
-        //         hookQs[i].visible = true;
-
-        //     }, 400);
-        // }
 
 
     }
@@ -2285,26 +2277,18 @@ function gameEnd() {
     for (var i = 0; i < scores.length; i++) {
         myHScore.text += scores[i] + "                      "
     }
-    // myHScore.text = "High Scores " + scores 
-    // myHScore.sort;
+
     scoreCounter = 0;
 }
 
 
 function initLevel() {
-
-    // Score
-    // const myScore = new PIXI.Text(scoreCounter.toString(), style1);
-    // myScore.position.set(800, 100);
-    // myScore.style.wordWrap = true;
-    // myScore.style.wordWrapWidth = 100;
-    // myScore.style.align = 'center';
-
-
+    validate();
     getScore(scoreCounter);
     score.visible = false;
     xContainer.addChild(score);
-    //Background Images
+
+    //Initialize Background Images
     bkg = new PIXI.TilingSprite(app.loader.resources["bkg"].texture, app.screen.width, app.screen.height);
     bkg2 = new PIXI.TilingSprite(app.loader.resources["bkg2"].texture, app.screen.width, app.screen.height);
     bkg2.visible = false;
@@ -2312,7 +2296,7 @@ function initLevel() {
     bkgContainer.addChild(bkg);
     bkgContainer.addChild(bkg2);
 
-    // Fish Textures
+    //Initialize Fish Textures
     const bfTextures = [];
     for (let i = 0; i < 16; i++) {
         const bfTexture = PIXI.Texture.from(`../Game Files/Sprites/backgroundItems/BackgroundItems/Final/BlueFishS/bluefish_${i}.png`);
@@ -2345,34 +2329,6 @@ function initLevel() {
     }
 
 
-    // Hook Textures
-
-    // const hkDTextures = [];
-    // const hqTexture = PIXI.Texture.from(`../Game Files/Sprites/backgroundItems/BackgroundItems/Final/Hook/hookQuestion.png`);
-    // for (let i = 0; i < 37; i++) {
-    //     const hkDTexture = PIXI.Texture.from(`../Game Files/Sprites/GameSprites/Hook/HookD/frame_${i}_delay-0.1s.png`);
-    //     hkDTextures.push(hkDTexture);
-    // }
-
-
-    // const hkCTextures = [];
-    // for (let i = 0; i < 74; i++) {
-    //     const hkCTexture = PIXI.Texture.from(`../Game Files/Sprites/backgroundItems/BackgroundItems/Final/Hook/HookDC/frame_${i}_delay-0.1s.png`);
-    //     hkCTextures.push(hkCTexture);
-    // }
-    // const hkUTextures = [];
-    // for (let i = 0; i < 37; i++) {
-    //     const hkUTexture = PIXI.Texture.from(`../Game Files/Sprites/GameSprites/Hook/HookU/frame_${i}_delay-0.1s.png`);
-    //     hkUTextures.push(hkUTexture);
-    // }
-
-
-
-    // hookCombo[i].position.set(1100 + (30 * i), 0 + (200 * i));
-    // // hookUp.scale.set(0.5, 0.5);
-    // hookCombo[i].animationSpeed  = 1;
-    // hookCombo[i].visible = true;
-    // hookCombo[i].play();
 
     //Players' & Background Fish Initialization
     player = new PIXI.AnimatedSprite(bfTextures);
@@ -2408,48 +2364,6 @@ function initLevel() {
     loadingSprite.visible = false;
     loadingSprite.play();
 
-    // hookDown = new PIXI.AnimatedSprite(hkDTextures);
-    // hookDown.position.set(1400, 0);
-    // // hookDown.scale.set(0.5, 0.5);
-    // hookDown.animationSpeed = 0.5;
-    // hookDown.visible = true;
-    // hookDown.play();
-
-
-    // hookUp = new PIXI.AnimatedSprite(hkUTextures);
-    // hookUp.position.set(1200, 0);
-    // // hookUp.scale.set(0.5, 0.5);
-    // hookUp.animationSpeed  = 0.5;
-    // hookUp.visible = true;
-    // hookUp.play();
-
-    // hookCombo[i].position.set(1100 + (30 * i), 0 + (200 * i));
-    // // hookUp.scale.set(0.5, 0.5);
-    // hookCombo[i].animationSpeed  = 1;
-    // hookCombo[i].visible = true;
-    // hookCombo[i].play();
-
-    // hookCombo[i] = new PIXI.AnimatedSprite(hkCTextures);
-    // hookCombo[i].position.set(1100 + (30 * i), 0 + (200 * i));
-    // // hookUp.scale.set(0.5, 0.5);
-    // hookCombo[i].animationSpeed  = 1;
-    // hookCombo[i].visible = true;
-    // hookCombo[i].play();
-    // xContainer.addChupdateQandA(pairQ4[0], pairQ4[1], pairQ4[2], pairQ4[3]);= PIXI.Sprite.from(`../Game Files/Sprites/backgroundItems/BackgroundItems/Final/Hook/HookSInitial.png`);
-    // hookInit.position.set(1100, 0);
-    // // hookInit.scale.set(0.5, 0.5);
-    // hookInit.scale.set(hookDown.scale.x, hookDown.scale.y);
-    // hookInit.visible = true;
-
-
-    // const hookFinal = PIXI.Sprite.from(`../Game Files/Sprites/backgroundItems/BackgroundItems/Final/Hook/HookSFinal.png`);
-    // hookFinal.position.set(1150, 0);
-    // // hookFinal.scale.set(0.5, 0.5);
-    // hookFinal.visible = true;
-
-
-
-
 
     //Creating Background Sprites & Adding All Sprites to the stage
 
@@ -2469,32 +2383,22 @@ function initLevel() {
     fgBack = createBg(app.loader.resources["fgBack"].texture);
     fgMiddle = createBg(app.loader.resources["fgMiddle"].texture);
 
-    // createHookQs();
-    // xContainer.addChild(hookUp);
 
     fgContainer.addChild(player);
-
-
-    // xContainer.addChild(hookDown);
-
-    // xContainer.addChild(hookInit);
-    // xContainer.addChild(hookFinal);
 
 
     fgFront = createFg(app.loader.resources["fgFront"].texture);
 
     document.addEventListener("keyup", switchDir);
 
-    //NFT PART
 
 
-
-
+    console.log("height + width", nftContainer.width, nftContainer.height)
 
     app.ticker.add(gameLoop)
 
 }
-
+//Function to create Foreground Sprites from Textures
 function createFg(texture) {
     let tiling = new PIXI.TilingSprite(texture, app.screen.width, app.screen.height / 2)
     if (texture == app.loader.resources["fgFront"].texture) {
@@ -2505,6 +2409,8 @@ function createFg(texture) {
     }
     return tiling;
 }
+
+//Function to create Background Sprites from Textures
 function createBg(texture) {
 
     let tiling = new PIXI.TilingSprite(texture, app.screen.width, app.screen.height / 2)
@@ -2515,7 +2421,7 @@ function createBg(texture) {
     }
     else if (texture == app.loader.resources["bgMiddle"].texture) {
         tiling.position.set(0, 510);
-        // tiling.tileTransform.position.x = 50;
+
         tiling.tileScale.x = 0.3;
         tiling.tileScale.y = 0.3;
     } else if (texture == app.loader.resources["bgFront"].texture) {
@@ -2524,19 +2430,15 @@ function createBg(texture) {
         tiling.tileScale.y = 0.5;
     } else if (texture == app.loader.resources["fgBack"].texture) {
         tiling.position.set(0, 710);
-        // tiling.tileScale.x = 1;
-        // tiling.tileScale.y = 2;
+
     }
     else if (texture == app.loader.resources["fgMiddle"].texture) {
         tiling.position.set(0, 350);
-        // tiling.tileTransform.position.x = 50;
+
         tiling.tileScale.x = 0.8;
         tiling.tileScale.y = 0.8;
     }
-    //  else if (texture == app.loader.resources["fgFront"].texture) {
-    // tiling.position.set(0, 675);
-    // tiling.tileScale.x = 0.6;
-    // tiling.tileScale.y = 0.6; }
+
     else if (texture == app.loader.resources["fgGrass1"].texture) {
         tiling.position.set(0, 598);
         tiling.tileScale.x = 0.6;
@@ -2552,7 +2454,7 @@ function createBg(texture) {
     }
 
 
-    // app.stage.addChild(tiling);
+
     xContainer.addChild(tiling);
     return tiling;
 }
@@ -2569,26 +2471,13 @@ function switchDir(e) {
             break;
         case 32:
 
-            // if (sbPressed == false && bgSpeed > -25) {
-            //     for (let i = 0; i < 11; i++) {
-            //         bgSpeed -= 2;
-            //     }
-            //     sbPressed = true;
-            //     setTimeout(() => {
-            //         for (let i = 0; i < 21; i++) {
-            //             bgSpeed += 1; sbPressed = false
-            //         }
-            //     }, 1000)
-            // }
-
-
-
             bgSpeed = 0;
             break;
 
     }
 }
 
+//Adding all containers to stage upon Initialization
 app.stage.addChild(bkgContainer);
 app.stage.addChild(aContainer);
 app.stage.addChild(xContainer);
@@ -2600,18 +2489,7 @@ app.stage.addChild(lContainer);
 app.stage.addChild(nftContainer);
 app.stage.addChild(popupContainer);
 
-// SFX
 
-const oceanSFX = new Howl({
-    src: ['../Game Files/Music/SFX/mixkit-sinking-in-the-sea-1178-loop.wav'],
-    loop: true
-});
 
 oceanSFX.play();
 
-//     //general variables
-// x = 1
-// setTimeout(function() {
-//     //your code to be executed after 1 second
-// y = x * 3
-//   }, delayInMilliseconds);
