@@ -1,0 +1,151 @@
+{"frames": {
+
+"greyNShadow_0.png":
+{
+	"frame": {"x":1,"y":1,"w":335,"h":136},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":114,"y":30,"w":335,"h":136},
+	"sourceSize": {"w":459,"h":194}
+},
+"greyNShadow_1.png":
+{
+	"frame": {"x":328,"y":139,"w":335,"h":137},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":114,"y":30,"w":335,"h":137},
+	"sourceSize": {"w":459,"h":194}
+},
+"greyNShadow_2.png":
+{
+	"frame": {"x":328,"y":139,"w":335,"h":137},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":114,"y":30,"w":335,"h":137},
+	"sourceSize": {"w":459,"h":194}
+},
+"greyNShadow_3.png":
+{
+	"frame": {"x":328,"y":139,"w":335,"h":137},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":114,"y":30,"w":335,"h":137},
+	"sourceSize": {"w":459,"h":194}
+},
+"greyNShadow_4.png":
+{
+	"frame": {"x":328,"y":139,"w":335,"h":137},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":114,"y":30,"w":335,"h":137},
+	"sourceSize": {"w":459,"h":194}
+},
+"greyNShadow_5.png":
+{
+	"frame": {"x":1,"y":139,"w":325,"h":136},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":114,"y":30,"w":325,"h":136},
+	"sourceSize": {"w":459,"h":194}
+},
+"greyNShadow_6.png":
+{
+	"frame": {"x":1,"y":139,"w":325,"h":136},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":114,"y":30,"w":325,"h":136},
+	"sourceSize": {"w":459,"h":194}
+},
+"greyNShadow_7.png":
+{
+	"frame": {"x":328,"y":278,"w":340,"h":137},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":114,"y":30,"w":340,"h":137},
+	"sourceSize": {"w":459,"h":194}
+},
+"greyNShadow_8.png":
+{
+	"frame": {"x":670,"y":278,"w":339,"h":137},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":114,"y":30,"w":339,"h":137},
+	"sourceSize": {"w":459,"h":194}
+},
+"greyNShadow_9.png":
+{
+	"frame": {"x":681,"y":417,"w":327,"h":141},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":114,"y":26,"w":327,"h":141},
+	"sourceSize": {"w":459,"h":194}
+},
+"greyNShadow_10.png":
+{
+	"frame": {"x":1,"y":417,"w":343,"h":141},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":114,"y":26,"w":343,"h":141},
+	"sourceSize": {"w":459,"h":194}
+},
+"greyNShadow_11.png":
+{
+	"frame": {"x":1,"y":417,"w":343,"h":141},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":114,"y":26,"w":343,"h":141},
+	"sourceSize": {"w":459,"h":194}
+},
+"greyNShadow_12.png":
+{
+	"frame": {"x":346,"y":417,"w":333,"h":141},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":114,"y":26,"w":333,"h":141},
+	"sourceSize": {"w":459,"h":194}
+},
+"greyNShadow_13.png":
+{
+	"frame": {"x":665,"y":139,"w":321,"h":137},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":114,"y":30,"w":321,"h":137},
+	"sourceSize": {"w":459,"h":194}
+},
+"greyNShadow_14.png":
+{
+	"frame": {"x":1,"y":277,"w":325,"h":137},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":114,"y":30,"w":325,"h":137},
+	"sourceSize": {"w":459,"h":194}
+},
+"greyNShadow_15.png":
+{
+	"frame": {"x":338,"y":1,"w":328,"h":136},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":114,"y":30,"w":328,"h":136},
+	"sourceSize": {"w":459,"h":194}
+},
+"greyNShadow_16.png":
+{
+	"frame": {"x":668,"y":1,"w":325,"h":136},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":114,"y":30,"w":325,"h":136},
+	"sourceSize": {"w":459,"h":194}
+}},
+"animations": {
+	"greyNShadow": ["greyNShadow_0.png","greyNShadow_1.png","greyNShadow_2.png","greyNShadow_3.png","greyNShadow_4.png","greyNShadow_5.png","greyNShadow_6.png","greyNShadow_7.png","greyNShadow_8.png","greyNShadow_9.png","greyNShadow_10.png","greyNShadow_11.png","greyNShadow_12.png","greyNShadow_13.png","greyNShadow_14.png","greyNShadow_15.png","greyNShadow_16.png"]
+},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "GreyNShadow.png",
+	"format": "RGBA8888",
+	"size": {"w":1010,"h":559},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:7ee0ca10306db8d054222f099ecd313c:f6749b0230e91c03e508e9dc603040ad:0d291decc134017700edabd1c0590937$"
+}
+}

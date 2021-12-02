@@ -1,0 +1,46 @@
+
+.myApp {
+    padding: 0;
+
+    position: fixed;
+
+    /* top: 10%;
+
+    left: 4%;
+
+    margin-top: -25px; */
+
+}
+.myInput {
+    position: fixed  ;
+    top: 10%;
+
+    left: 4%;
+
+    margin-top: -25px;
+    z-index: -2;
+}
+.myForm {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    touch-action: none;
+    width: 100%;
+    height: 100%;
+    border: 1px dashed;
+    z-index : -1;
+}
+
+.higher-canvas {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 99;
+}
+
+.lower-canvas {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: -99;
+}

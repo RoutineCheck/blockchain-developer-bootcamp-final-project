@@ -1,0 +1,32 @@
+{"frames": {
+
+"bluegroup_12.png":
+{
+	"frame": {"x":1,"y":821,"w":1335,"h":820},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":23,"y":45,"w":1335,"h":820},
+	"sourceSize": {"w":1375,"h":915}
+},
+"bluegroup_14.png":
+{
+	"frame": {"x":1,"y":1,"w":1337,"h":818},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":22,"y":47,"w":1337,"h":818},
+	"sourceSize": {"w":1375,"h":915}
+}},
+"animations": {
+	"bluegroup": ["bluegroup_12.png","bluegroup_14.png"]
+},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "BlueGroup-9.png",
+	"format": "RGBA8888",
+	"size": {"w":1339,"h":1642},
+	"scale": "1",
+	"related_multi_packs": [ "BlueGroup-0.json", "BlueGroup-1.json", "BlueGroup-2.json", "BlueGroup-3.json", "BlueGroup-4.json", "BlueGroup-5.json", "BlueGroup-6.json", "BlueGroup-7.json", "BlueGroup-8.json", "BlueGroup-10.json", "BlueGroup-11.json", "BlueGroup-12.json", "BlueGroup-13.json", "BlueGroup-14.json" ],
+	"smartupdate": "$TexturePacker:SmartUpdate:7b5097f491af38e4e5eefc9910d363fc:20c4d9be1e9b00b645d4e2a191dde4d8:ccb58d6275134656cd6ec80fa27cd700$"
+}
+}
