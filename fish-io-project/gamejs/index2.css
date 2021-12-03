@@ -4,6 +4,7 @@
 .form {
     float: right;
     background: rgba(19, 35, 47, 0.9);
+    color: yellow;
     margin-top: 700px;
 
     padding: 40px;

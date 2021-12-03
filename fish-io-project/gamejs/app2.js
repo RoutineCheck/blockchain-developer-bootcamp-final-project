@@ -1,46 +1,47 @@
-//METAMASK REQUEST
-var transactionApproval = true;
-function validate() {
-  if (typeof web3 !== 'undefined'){
-    console.log('MetaMask is installed')
-    web3.eth.getAccounts(function(err, accounts){
-      if (err != null) {
-        console.log(err)
-      }
-      else if (accounts.length === 0) {
-        console.log('MetaMask is locked')
-      }
-      else {
-        console.log('MetaMask is unlocked')
+// //METAMASK REQUEST
+// var transactionApproval = true;
+// function validate() {
+//   if (typeof web3 !== 'undefined'){
+//     console.log('MetaMask is installed')
+//     web3.eth.getAccounts(function(err, accounts){
+//       if (err != null) {
+//         console.log(err)
+//       }
+//       else if (accounts.length === 0) {
+//         console.log('MetaMask is locked')
+//       }
+//       else {
+//         console.log('MetaMask is unlocked')
 
-        tokenInst.balanceOf(
-          web3.eth.accounts[0], 
-          function (error, result) {
 
-          if (!error && result) {
-            var balance = result.c[0];
-            if (balance < dappCost * (100000000)) {
-              console.log('MetaMask has insufficient balance')
-              return false;
-            }
-            console.log('MetaMask has balance')
-            if (transactionApproval == true ){
-              requestApproval();
-              transactionApproval = false;
-            }
-          }
-          else {
-            console.error(error);
-          }
-          return false;
-        });
-      }
-    });
-  } 
-  else{
-    console.log('MetaMask is not installed')
-  }
-}
+//         tokenInst.balanceOf(
+//           web3.eth.accounts[0], 
+//           function (error, result) {
+
+//           if (!error && result) {
+//             var balance = result.c[0];
+//             if (balance < dappCost * (100000000)) {
+//               console.log('MetaMask has insufficient balance')
+//               return false;
+//             }
+//             console.log('MetaMask has balance')
+//             if (transactionApproval == true ){
+//               requestApproval();
+//               transactionApproval = false;
+//             }
+//           }
+//           else {
+//             console.error(error);
+//           }
+//           return false;
+//         });
+//       }
+//     });
+//   } 
+//   else{
+//     console.log('MetaMask is not installed')
+//   }
+// }
 // request approval from MetaMask user
 // function requestApproval() {
 //   tokenInst.approve(
@@ -85,8 +86,10 @@ const myForm = document.getElementById("myForm");
 const csvFile = document.getElementById("csvFile");
 const inputFish = document.getElementById("inputFish");
 let fishName = "";
+let fishNames = [];
 let fishID;
 const fishIDs = [];
+let fishNamesTS;
 
 myInput.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -163,9 +166,9 @@ const Graphics = PIXI.Graphics;
 
 //Initialize Global Variables
 
-let switchSpeed = false;
-let bgOSpeed;
+
 let gameEnded = false;
+let gameWon = false;
 
 let bkg;
 let bkg2;
@@ -398,7 +401,7 @@ popupInfo.style.wordWrap = false;
 popupInfo.style.align = 'center';
 
 
-const myNFTName = new PIXI.Text(fishName.toString() + fishTypes[0], style2);
+const myNFTName = new PIXI.Text(fishNamesTS + fishTypes[0], style2);
 myNFTName.position.set(680, 600);
 myNFTName.style.wordWrap = false;
 myNFTName.style.align = 'center';
@@ -445,7 +448,30 @@ const oceanSFX = new Howl({
     loop: true
 });
 
+const hookSplashSFX = new Howl({
+    src: ['../Game Files/Music/SFX/hookSplash.wav'],
+   
+});
 
+const hookRemoveSFX = new Howl({
+    src: ['../Game Files/Music/SFX/hookRemove.wav'],
+   
+});
+
+const questionCorrectSFX = new Howl({
+    src: ['../Game Files/Music/SFX/questionCorrect.mp3'],
+   
+});
+
+const fishObtainedSFX = new Howl({
+    src: ['../Game Files/Music/SFX/fishObtained.mp3'],
+   
+});
+
+const togglePopupSFX = new Howl({
+    src: ['../Game Files/Music/SFX/togglePopup.mp3'],
+   
+});
 
 //TITLE TEXT
 
@@ -463,7 +489,7 @@ sContainer.addChild(myTitle);
 
 // GAME INSTRUCTIONS
 
-const myInfo = new PIXI.Text("Use the Mouse to move. Escape the fisherman's hook!", style1);
+const myInfo = new PIXI.Text("Use the Mouse to move. Increase or decrease speed using Right/Left Arrow Keys. Escape the fishhooks!", style1);
 myInfo.position.set(500, 100);
 myInfo.style.wordWrap = false;
 // myInfo.style.wordWrapWidth = 200;
@@ -532,8 +558,17 @@ function toggleFlag(value) {
 
 }
 
+//Function to return the correct display forms
+
+
 //Function to reset  global variable values
-function resetVars() {
+function resetVars() {  
+     bgX = 0;
+        bgF = 0;
+        bgF2 = 0;
+        bgH = 4370;
+        bgSpeed = -6;
+
     try {
 
         //reset hooks and question baord sprites
@@ -545,12 +580,7 @@ function resetVars() {
             hookQsW[i].visible = false;
         }
         //reset ticker speed related variables
-        bgX = 0;
-        bgF = 0;
-        bgF2 = 0;
-        bgH = 4370;
-        bgSpeed = -6;
-
+     
     } catch (error) {
         console.log("Variables are not initialized");
     }
@@ -561,6 +591,7 @@ function resetVars() {
 //Function to loop Game when level is won 
 
 function onLevelWin() {
+    questionCorrectSFX.play();
     myLevel.visible = true;
     for (let i = 0; i < levels.length - 1; i++) {
         if (levels[i] == true) {
@@ -585,13 +616,14 @@ function onLevelWin() {
     }
 
 
-
-
     if (level5 == false) {
-        setTimeout(() => { resetVars(); bgH = 4370; nextLevel = true; hookPlay(); correct.visible = false; }, 1000);
+        setTimeout(() => { bgH = 4370; nextLevel = true; hookPlay(); correct.visible = false; }, 1000);
     }
 
     if (level5 == true) {
+
+        console.log("About to return win!")
+
         setTimeout(() => {
             onGameWin();
         }, 1000)
@@ -606,18 +638,34 @@ function loopOnGameWin() {
     }, 5000);
 }
 function onGameWin() {
+    gameWon = true;
+    console.log("Game Won!");
+    const regExf = new RegExp(/[^a-z0-9]/gi);
+    let fishNTrim = fishName.replace(/\s+/g, '');
 
-    if (fishName == "") {
-   
-        var maxLength = 14;
-        var fName
-        
-        while (fName == null || fName.length > maxLength) {
-            fName = window.prompt('Please provide a fishname under ' + maxLength + ' characters');
+    if (fishName == "" || fishName.replace(/\s+/g, '') == '' || fishNames.includes(fishName) || fishName.length < minLength || fishName.length > maxLength) {
+
+        let minLength = 4;
+        let maxLength = 14;
+        let fName = '';
+
+
+        while (fName == "" || fName.replace(/\s+/g, '') == '' || fishNames.includes(fName) || fName.length < minLength || fName.length > maxLength) {
+            console.log(fName == "", fName.replace(/\s+/g, '') == '', fishNames.includes(fName), fName.length > maxLength)
+            fName = window.prompt('Please provide a unique alphanumeric fishname between ' + minLength + ' - ' + maxLength + 'characters');
         }
-       
-        fishName = fName
 
+        fishName = fName;
+
+        fishNames.push(fishName);
+
+
+        fishNamesTS = fishNames.join(' ');
+
+        myNFTName.text = fishNamesTS;
+
+        fishObtainedSFX.play();
+        
         alert("Hi " + fishName + ", Congrats! Your NFT is in your inventory. It's type is: " + fishTypes[0]);
         miniOnGameEnd();
         miniRemoveHQs();
@@ -630,9 +678,19 @@ function onGameWin() {
         bContainer.visible = false;
         myNFTName.visible = true;
 
-    } else if (fishName != "") {
 
+        document.getElementById("myInput").style.display = 'block';
+        document.getElementById("csvFile").style.display = 'block';
+        document.getElementById("myForm").style.display = 'block';
+
+
+
+    } else {
+
+        fishNames.push(fishName);
+        fishObtainedSFX.play();
         alert("Hi " + fishName + ", Congrats! Your NFT is in your inventory. It's type is: " + fishTypes[0]);
+        console.log("Validated Names!");
         miniOnGameEnd();
         miniRemoveHQs();
 
@@ -643,17 +701,25 @@ function onGameWin() {
         goContainer.visible = false;
         bContainer.visible = false;
         myNFTName.visible = true;
+
+
+        document.getElementById("myInput").style.display = 'none';
+        document.getElementById("csvFile").style.display = 'none';
+        document.getElementById("myForm").style.display = 'none';
 
     }
+    
 
 
-    console.log("You Won! See your high score.")
 
+    console.log("You Won! See your high score.");
+    console.log(fishNames.toString());
 }
 
 
 //Function for on Game End (if player did not lose)
 function miniOnGameEnd() {
+    resetVars();
     buttonStarted = false;
     gameEnded = true;
     score.visible = false;
@@ -689,6 +755,7 @@ function onGameEnd() {
     gameEnded = true;
     removeQBoards();
     gameEnd();
+    resetVars();
     gmContainer.visible = false;
     score.visible = false;
     myLevel.visible = false;
@@ -796,11 +863,6 @@ function returnLevel() {
         level3 = false;
         level4 = false;
         level5 = true;
-    } else if (hooksCalled == 6) {
-
-        onGameWin();
-
-
     } else {
 
     }
@@ -1168,9 +1230,14 @@ function onButtonDown() {
 
     if (this == button1) {
         this.texture = startButton;
-        if (typeof(data) == 'undefined') {
+        if (typeof (data) == 'undefined') {
             alert("Please enter a valid CSV file!")
         } else {
+            buttonSFX.play();
+
+            document.getElementById("myInput").style.display = 'none';
+            document.getElementById("csvFile").style.display = 'none';
+            document.getElementById("myForm").style.display = 'none';
 
             gameEnded = false;
             xContainer.addChild(myLevel);
@@ -1185,7 +1252,7 @@ function onButtonDown() {
             console.log("levels.length" + levels.length);
             console.log(pairQ1.length)
 
-            
+
             sContainer.visible = false;
             loadingSprite.visible = true;
             player.visible = true;
@@ -1195,7 +1262,7 @@ function onButtonDown() {
             myInfo.visible = true;
             nftContainer.visible = false;
             popupContainer.visible = false;
-            
+
 
             player.position.set(app.view.width / 2, app.view.height / 2);
 
@@ -1212,9 +1279,13 @@ function onButtonDown() {
 
         }
     } else if (this == button2) {
-        this.texture = hscoreButton;
+         togglePopupSFX.play();
+         this.texture = hscoreButton;
         myHScore.visible = toggleFlag(myHScore.visible);
+       
+
     } else if (this == button3) {
+        buttonSFX.play();
         miniRemoveHQs();
         this.texture = homeButton;
         gmContainer.visible = false;
@@ -1226,7 +1297,13 @@ function onButtonDown() {
         bContainer.visible = false;
         nftContainer.visible = true;
         popupContainer.visible = true;
+
+
+        document.getElementById("myInput").style.display = 'block';
+        document.getElementById("csvFile").style.display = 'block';
+        document.getElementById("myForm").style.display = 'block';
     } else if (this == button4) {
+        togglePopupSFX.play();
         miniOnGameEnd();
         miniRemoveHQs();
         goContainer.visible = false;
@@ -1268,7 +1345,7 @@ function onButtonDown() {
 
     } else if (this == button5) {
         miniRemoveHQs();
-
+        buttonSFX.play();
         this.texture = homeButton2;
         gmContainer.visible = false;
         sContainer.visible = true;
@@ -1277,9 +1354,12 @@ function onButtonDown() {
         goContainer.visible = false;
         bContainer.visible = false;
 
+        document.getElementById("myInput").style.display = 'block';
+        document.getElementById("csvFile").style.display = 'block';
+        document.getElementById("myForm").style.display = 'block';
 
     } else if (this == button6) {
-
+        togglePopupSFX.play();
         miniRemoveHQs();
         goContainer.visible = false;
         bContainer.visible = false;
@@ -1319,11 +1399,11 @@ function onButtonDown() {
         }, 4000);
 
     } else if (this == nftButton) {
-
+        togglePopupSFX.play();
         this.texture = viewButton;
         popupContainer.visible = toggleFlag(popupContainer.visible);
     }
-    buttonSFX.play();
+    // buttonSFX.play();
 
     this.alpha = 1;
 }
@@ -1521,7 +1601,6 @@ function gameLoop(delta) {
 
 function updateBg() {
 
-    myNFTName.text = fishName.toString();
     // console.log(delayStart == true)
     hookPosf = (bgH / 3) + 30;
     if (buttonStarted == true) {
@@ -1751,18 +1830,16 @@ function updateBg() {
 //CHECK IF QUESTION ANSWER IS CORRECT
 
 function checkAnswer() {
-    // for (let i = 1; i < 5; i++) {
-    console.log("HookQs Pos: " + hookQs[0].x);
-    console.log("bgH " + bgH)
-
-    console.log("bgX " + bgX)
-    if (hookQs[0].x < (app.screen.width / 2)) {
+console.log("checking Answer");
+console.log(hookQs[0].x);
+    if (bgH < 2422) {
         for (let i = 0; i < correctAnswers.length; i++) {
             if (levels[i] == true) {
                 if (between(player.y, 104, 264)) {
                     if (pairQuestions[i][0] == correctAnswers[i].replace('*', '')) {
                         buttonSFX.play();
                         console.log("Your Answer is Correct");
+                        
                         onLevelWin();
                     } else {
                         console.log("Your Answer = " + pairQuestions[i][0])
@@ -1862,7 +1939,6 @@ function miniRemoveHQs() {
     bkg.visible = true;
     bkg2.visible = false;
     player.visible = false;
-    bgSpeed = -3;
     delayStart = false;
     scoreCounter = 0;
     score.visible = false;
@@ -1985,7 +2061,7 @@ function removeHookQs() {
 
         hookQsW[i].loop = false;
         hookQsW[i].play();
-
+        hookRemoveSFX.play();
 
 
         // hookCombo[i].play();
@@ -1999,7 +2075,8 @@ function removeHookQs() {
 
     console.log("Player is ahead of hookPosf");
 
-    if (gameEnded == false) {
+    console.log("gameEnded = " + gameEnded);
+   
 
         checkAnsColor();
         checkAnswer();
@@ -2009,9 +2086,6 @@ function removeHookQs() {
         console.log(gameEnded);
 
 
-    } else {
-        onGameEnd();
-    }
 
 
 
@@ -2181,6 +2255,7 @@ function hookPlay() {
 
     }
     if (hooksCreated == true) {
+        
 
 
 
@@ -2195,12 +2270,12 @@ function hookPlay() {
 
         // Replaying Hooks
         for (let i = 0; i < 3; i++) {
-
-
+            
             hookCombo[i].loop = false;
 
             hookCombo[i].visible = true;
             hookCombo[i].play();
+            hookSplashSFX.play();
 
 
 
@@ -2212,7 +2287,7 @@ function hookPlay() {
             hooksCalled += 1;
             returnLevel();
 
-        } else if (hooksCalled > 0) {
+        } else if (hooksCalled > 0 && hooksCalled < 6) {
             hooksCalled += 1;
             returnLevel();
         }
@@ -2275,7 +2350,7 @@ function gameEnd() {
     }).reverse();
 
     for (var i = 0; i < scores.length; i++) {
-        myHScore.text += scores[i] + "                      "
+        myHScore.text += scores[i] + "                                  "
     }
 
     scoreCounter = 0;
@@ -2283,7 +2358,7 @@ function gameEnd() {
 
 
 function initLevel() {
-    validate();
+    // validate();
     getScore(scoreCounter);
     score.visible = false;
     xContainer.addChild(score);
@@ -2460,18 +2535,36 @@ function createBg(texture) {
 }
 
 function switchDir(e) {
+    let maxSpeed = -29;
+    let minSpeed = -3;
+    let sIncrement = 1;
     // console.log(e.keyCode);
     switch (e.keyCode) {
+    
         case 39:
             // right arrow
-            bgSpeed = bgSpeed - 1;
+
+                if (bgSpeed > maxSpeed && delayStart == false) {
+
+            console.log("increasing speed");
+                bgSpeed -= sIncrement
+                } else {
+                    console.log("max speed: " + maxSpeed);
+                }
             break;
         case 37:
-            bgSpeed = bgSpeed + 1;
+            if (bgSpeed < minSpeed && delayStart == false) {
+
+                console.log("decreasing speed");
+                    bgSpeed += sIncrement
+                    } else {
+                        console.log("min speed: " + minSpeed);
+                    }
+      
             break;
         case 32:
 
-            bgSpeed = 0;
+            // bgSpeed = 0;
             break;
 
     }
