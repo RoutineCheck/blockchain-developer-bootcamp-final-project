@@ -1,84 +1,11 @@
-// //METAMASK REQUEST
-// var transactionApproval = true;
-// function validate() {
-//   if (typeof web3 !== 'undefined'){
-//     console.log('MetaMask is installed')
-//     web3.eth.getAccounts(function(err, accounts){
-//       if (err != null) {
-//         console.log(err)
-//       }
-//       else if (accounts.length === 0) {
-//         console.log('MetaMask is locked')
-//       }
-//       else {
-//         console.log('MetaMask is unlocked')
+// import Web3 from 'web3';
 
+// const web3 = new Web3(window.ethereum);
+// await window.ethereum.enable();
 
-//         tokenInst.balanceOf(
-//           web3.eth.accounts[0], 
-//           function (error, result) {
-
-//           if (!error && result) {
-//             var balance = result.c[0];
-//             if (balance < dappCost * (100000000)) {
-//               console.log('MetaMask has insufficient balance')
-//               return false;
-//             }
-//             console.log('MetaMask has balance')
-//             if (transactionApproval == true ){
-//               requestApproval();
-//               transactionApproval = false;
-//             }
-//           }
-//           else {
-//             console.error(error);
-//           }
-//           return false;
-//         });
-//       }
-//     });
-//   } 
-//   else{
-//     console.log('MetaMask is not installed')
-//   }
-// }
-// request approval from MetaMask user
-// function requestApproval() {
-//   tokenInst.approve(
-//     addrHOLD,
-//     truePlanCost,
-//     { gasPrice: web3.toWei('50', 'gwei') },
-//     function (error, result) {
-
-//     if (!error && result) {
-//       var data;
-//       console.log('approval sent to network.');
-//       var url = 'https://etherscan.io/tx/' + result;
-//       var link = '<a href=\"" + 
-//                   url + 
-//                   "\" target=\"_blank\">View Transaction</a>';
-//       console.log('waiting for approval ...');
-//       data = {
-//         txhash: result,
-//         account_type: selectedPlanId,
-//         txtype: 1, // Approval
-//       };
-//       apiService(data, '/transaction/create/', 'POST')
-//       .done(function (response) {
-//         location.href = response.tx_url;
-//       });
-//     }
-//     else {
-//       console.error(error);
-//       console.log('You rejected the transaction');
-//     }
-//   });
-
-
-
+// const NameContract = web3.eth.Contract(contract_abi, contract_address);
 
 // HTML FORM INFORMATION
-
 
 let data;
 
@@ -87,6 +14,7 @@ const csvFile = document.getElementById("csvFile");
 const inputFish = document.getElementById("inputFish");
 let fishName = "";
 let fishNames = [];
+let fishDetails = [];
 let fishID;
 const fishIDs = [];
 let fishNamesTS;
@@ -162,10 +90,15 @@ app.renderer.view.style.position = 'absolute';
 
 document.body.appendChild(app.view);
 
-const Graphics = PIXI.Graphics;
-
 //Initialize Global Variables
 
+const Graphics = PIXI.Graphics;
+
+
+
+let maxSpeed = -24;
+let minSpeed = -6;
+let sIncrement = 1;
 
 let gameEnded = false;
 let gameWon = false;
@@ -203,7 +136,7 @@ let bgX = 0;
 let bgF = 0;
 let bgF2 = 0;
 let bgH = 4370;
-let bgSpeed = -6;
+let bgSpeed = -5;
 
 
 let buttonStarted = false;
@@ -281,7 +214,8 @@ let fishTypes = ["GreyFish", "BlueFish", "OrangeFish"];
 
 
 
-document.body.style.cursor = 'none';
+// document.getElementById("myApp").style.cursor = "pointer";
+
 
 // ALL STYLES
 
@@ -303,7 +237,7 @@ const style = new PIXI.TextStyle({
 const style1 = new PIXI.TextStyle({
     fontFamily: 'Montserrat',
     fontSize: 45,
-    fill: 'cyan',
+    fill: 'white',
     stroke: '#fffffff',
     strokeThickness: 4,
     // dropShadow: false,
@@ -334,7 +268,7 @@ const style3 = new PIXI.TextStyle({
     fontSize: 50,
     fontStyle: "italic",
     fill: 'orange',
-    stroke: '#000000',
+    stroke: '#4a4a4a',
     strokeThickness: 3,
     // dropShadow: false,
     // dropShadowDistance: 10,
@@ -346,7 +280,7 @@ const style3 = new PIXI.TextStyle({
 const style4 = new PIXI.TextStyle({
     fontFamily: 'Montserrat',
     fontSize: 45,
-    fill: 'chartreuse',
+    fill: 'white',
     stroke: '#fffffff',
     strokeThickness: 4,
     // dropShadow: false,
@@ -387,6 +321,15 @@ const bkgContainer = new PIXI.Container();
 const aContainer = new PIXI.Container();
 
 
+// Background Filter
+
+const bkgFilter = new Graphics();
+bkgFilter.beginFill(0x0077BE, 0.25)
+    // .lineStyle(4, 0xFFFFFF, 1)
+    .drawRect(0, 0, app.screen.width, app.screen.height)
+    .endFill();
+
+
 //NFT WORK HERE
 
 // NFT DISPLAY CONTAINER: nftContainer
@@ -401,11 +344,14 @@ popupInfo.style.wordWrap = false;
 popupInfo.style.align = 'center';
 
 
-const myNFTName = new PIXI.Text(fishNamesTS + fishTypes[0], style2);
+//Currently the NFT consists of NFT name + type, but it will include an ID and an image of the NFT later
+
+const myNFTName = new PIXI.Text("", style2);
 myNFTName.position.set(680, 600);
 myNFTName.style.wordWrap = false;
-myNFTName.style.align = 'center';
+// myNFTName.style.align = 'center';
 myNFTName.visible = false;
+
 
 console.log("fishName is: " + fishName.toString());
 
@@ -436,7 +382,12 @@ const viewButton = PIXI.Texture.from('../Game Files/Sprites/GameSprites/NFTs/vie
 const viewButtonOver = PIXI.Texture.from('../Game Files/Sprites/GameSprites/NFTs/viewNfTsClicked.png')
 
 
-
+//ALL MUSIC(USING HOWL LIBRARY)
+const technoMusic = new Howl({
+    src: ['../Game Files/Music/technoMusic.wav'],
+    loop: true,
+    volume: 0.75
+});
 
 //ALL SFX (USING HOWL LIBRARY)
 const buttonSFX = new Howl({
@@ -449,28 +400,28 @@ const oceanSFX = new Howl({
 });
 
 const hookSplashSFX = new Howl({
-    src: ['../Game Files/Music/SFX/hookSplash.wav'],
-   
+    src: ['../Game Files/Music/SFX/hookSplash.wav']
+
 });
 
 const hookRemoveSFX = new Howl({
-    src: ['../Game Files/Music/SFX/hookRemove.wav'],
-   
+    src: ['../Game Files/Music/SFX/hookRemove.wav']
+
 });
 
 const questionCorrectSFX = new Howl({
-    src: ['../Game Files/Music/SFX/questionCorrect.mp3'],
-   
+    src: ['../Game Files/Music/SFX/questionCorrect.mp3']
+
 });
 
 const fishObtainedSFX = new Howl({
-    src: ['../Game Files/Music/SFX/fishObtained.mp3'],
-   
+    src: ['../Game Files/Music/SFX/fishObtained.mp3']
+
 });
 
 const togglePopupSFX = new Howl({
-    src: ['../Game Files/Music/SFX/togglePopup.mp3'],
-   
+    src: ['../Game Files/Music/SFX/togglePopup.mp3']
+
 });
 
 //TITLE TEXT
@@ -479,7 +430,7 @@ const myTitle = new PIXI.Text('Fish.io', style);
 
 
 
-myTitle.position.set(800, 100);
+myTitle.position.set(780, 100);
 myTitle.style.wordWrap = false;
 // myTitle.style.wordWrapWidth = 200;
 myTitle.style.align = 'center';
@@ -489,13 +440,13 @@ sContainer.addChild(myTitle);
 
 // GAME INSTRUCTIONS
 
-const myInfo = new PIXI.Text("Use the Mouse to move. Increase or decrease speed using Right/Left Arrow Keys. Escape the fishhooks!", style1);
+const myInfo = new PIXI.Text("Use the Mouse to move. Increase or decrease speed using the Right/Left Arrow Keys. Escape the fishhooks!", style1);
 myInfo.position.set(500, 100);
 myInfo.style.wordWrap = false;
-// myInfo.style.wordWrapWidth = 200;
+myInfo.style.wordWrapWidth = 1200;
 myInfo.style.align = 'center';
 myInfo.visible = false;
-xContainer.addChild(myInfo);
+
 
 
 //LEVEL WIN TEXTS
@@ -505,12 +456,11 @@ correct.style.wordWrap = true;
 correct.style.wordWrapWidth = 700;
 correct.style.align = 'center';
 correct.visible = false;
-bContainer.addChild(correct);
 
 let myLevel = new PIXI.Text("Level: 1", style4);
-myLevel.position.set(800, 150);
+myLevel.position.set(750, 50);
 myLevel.style.wordWrap = false;
-myLevel.style.wordWrapWidth = 700;
+// myLevel.style.wordWrapWidth = 700;
 myLevel.style.align = 'center';
 myLevel.visible = false;
 
@@ -526,8 +476,13 @@ sContainer.addChild(myHScore);
 
 sContainer.interactive = true;
 sContainer.buttonMode = true;
-app.renderer.plugins.interaction.defaultCursorStyle = 'inherit';
+// app.renderer.plugins.interaction.defaultCursorStyle = 'inherit';
 
+const defaultIcon = "url('../Game Files/Sprites/GameSprites/BlueCursor.png'),auto";
+const hoverIcon = "url('../Game Files/Sprites/GameSprites/BlueCursor.png'),auto";
+
+app.renderer.plugins.interaction.cursorStyles.default = defaultIcon;
+app.renderer.plugins.interaction.cursorStyles.pointer = hoverIcon;
 
 
 //GAME OVER DISPLAY BOX
@@ -545,10 +500,16 @@ gamewinRect.beginFill(0xFFFFFF)
     .drawRect(700, 100, 400, 500)
     .endFill();
 
-//Function to make sprites invisible
+
 
 
 //ALL LOGICAL FUNCTIONS
+
+//Function to get Random Number 
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
 
 //Function to Toggle Booleans
 function toggleFlag(value) {
@@ -558,29 +519,62 @@ function toggleFlag(value) {
 
 }
 
-//Function to return the correct display forms
+//FUnction to init question array variables
 
+function initVars() {
+    correctAnswers = [];
+    pairQuestions = [];
+}
 
 //Function to reset  global variable values
-function resetVars() {  
-     bgX = 0;
-        bgF = 0;
-        bgF2 = 0;
-        bgH = 4370;
-        bgSpeed = -6;
+function resetVars() {
+    gameWon = false;
+    bgX = 0;
+    bgF = 0;
+    bgF2 = 0;
+    bgH = 4370;
+    bgSpeed = -5;
+
+    board1.visible = false;
+    board2.visible = false;
+    board3.visible = false;
+    question.visible = false;
+
+    for (let i = 0; i < 3; i++) {
+
+        hookUp[i].visible = false;
+        hookCombo[i].visible = false;
+        hookQs[i].visible = false;
+        hookQsR[i].visible = false;
+        hookQsW[i].visible = false;
+    }
 
     try {
 
         //reset hooks and question baord sprites
-        for (i = 0; i < 3; i++) {
-            hookUp[i].visible = false;
-            hookCombo[i].visible = false;
-            hookQs[i].visible = false;
-            hookQsR[i].visible = false;
-            hookQsW[i].visible = false;
+        for (let i = 0; i < 3; i++) {
+
+
+
+            if (hookUp[i].playing) {
+                hookUp[i].stop();
+            }
+            if (hookCombo[i].playing) {
+                hookCombo[i].stop();
+            }
+            // if (hookQs[i].playing) {
+            //     hookQs[i].stop();
+            // }
+            // if (hookQsR[i].playing) {
+            //     hookQsR[i].stop();
+            // }
+            // if (hookQsW[i].playing) {
+            //     hookQsW[i].stop();
+            // }
+
         }
         //reset ticker speed related variables
-     
+
     } catch (error) {
         console.log("Variables are not initialized");
     }
@@ -604,6 +598,8 @@ function onLevelWin() {
 
         }
     }
+
+
     let fn = levels.length - 1
 
 
@@ -616,64 +612,93 @@ function onLevelWin() {
     }
 
 
-    if (level5 == false) {
-        setTimeout(() => { bgH = 4370; nextLevel = true; hookPlay(); correct.visible = false; }, 1000);
-    }
 
-    if (level5 == true) {
+    setTimeout(() => {
+        for (let i = 0; i < 3; i++) {
+            hookQsR[i].visible = false;
+            hookQsW[i].visible = false;
+            hookUp[i].visible = false;
+        }; bgH = 4370; nextLevel = true; hookPlay(); correct.visible = false;
+    }, 1000);
 
-        console.log("About to return win!")
 
-        setTimeout(() => {
-            onGameWin();
-        }, 1000)
-    }
 
 }
 
 //Function to notify players upon winning the game
 function loopOnGameWin() {
-    setTimeout(() => {
-        onGameWin();
-    }, 5000);
+    onGameWin();
+
 }
 function onGameWin() {
     gameWon = true;
     console.log("Game Won!");
     const regExf = new RegExp(/[^a-z0-9]/gi);
     let fishNTrim = fishName.replace(/\s+/g, '');
+    let minLength = 4;
+    let maxLength = 14;
+    let fName = '';
+    let answer = ""
 
-    if (fishName == "" || fishName.replace(/\s+/g, '') == '' || fishNames.includes(fishName) || fishName.length < minLength || fishName.length > maxLength) {
+    if (fishName == "" || fishName == null || fishName.replace(/\s+/g, '') == '' || fishNames.includes(fishName) || fishName.length < minLength || fishName.length > maxLength) {
 
-        let minLength = 4;
-        let maxLength = 14;
-        let fName = '';
+
 
 
         while (fName == "" || fName.replace(/\s+/g, '') == '' || fishNames.includes(fName) || fName.length < minLength || fName.length > maxLength) {
             console.log(fName == "", fName.replace(/\s+/g, '') == '', fishNames.includes(fName), fName.length > maxLength)
             fName = window.prompt('Please provide a unique alphanumeric fishname between ' + minLength + ' - ' + maxLength + 'characters');
+            if (fName == null) {
+                answer = window.prompt("Do you want to continue without creating a fish NFT? Please enter 'Yes' or 'No'.");
+                console.log(answer);
+
+                if (answer == "Yes" || answer == "yes") {
+                    break;
+                } else if (answer == "No" || answer == "no") {
+
+                    answer = "";
+                    fName = "";
+                    // loopOnGameWin();
+
+                } else {
+                    break;
+                }
+            }
+
         }
 
-        fishName = fName;
 
-        fishNames.push(fishName);
+        if (fName != null) {
+
+            // fName += " - " + fishTypes[getRandomInt(fishTypes.length - 1)];
+
+            fishName = fName;
 
 
-        fishNamesTS = fishNames.join(' ');
 
-        myNFTName.text = fishNamesTS;
+            fishNames.push(fishName);
 
-        fishObtainedSFX.play();
-        
-        alert("Hi " + fishName + ", Congrats! Your NFT is in your inventory. It's type is: " + fishTypes[0]);
+            fishDetails = fishNames;
+
+            fishDetails = fishDetails.map(i => i + " - " + fishTypes[getRandomInt(fishTypes.length - 1)]);
+
+            fishNamesTS = fishDetails.join(' ');
+
+
+            myNFTName.text = fishNamesTS;
+
+            fishObtainedSFX.play();
+
+            alert("Hi " + fishName + ", Congrats! Your NFT is in your inventory. It's type is: " + fishTypes[getRandomInt(fishTypes.length - 1)]);
+        }
+
         miniOnGameEnd();
         miniRemoveHQs();
 
         gmContainer.visible = false;
         sContainer.visible = true;
         nftContainer.visible = true;
-        popupContainer.visible = true;
+        // popupContainer.visible = true;
         goContainer.visible = false;
         bContainer.visible = false;
         myNFTName.visible = true;
@@ -708,7 +733,7 @@ function onGameWin() {
         document.getElementById("myForm").style.display = 'none';
 
     }
-    
+
 
 
 
@@ -724,6 +749,7 @@ function miniOnGameEnd() {
     gameEnded = true;
     score.visible = false;
     myLevel.visible = false;
+    question.visible = false;
     goContainer.visible = false;
 
     bContainer.visible = false;
@@ -744,21 +770,24 @@ function miniOnGameEnd() {
     cAnswer3 = "";
     cAnswer4 = "";
     cAnswer5 = "";
-    correctAnswers = [];
+    // correctAnswers = [];
+
+    // pairQuestions = [];
 
 }
 
 //Function for on Game End (if player lost)
 function onGameEnd() {
-
+    resetVars();
     buttonStarted = false;
     gameEnded = true;
-    removeQBoards();
+
     gameEnd();
-    resetVars();
+
     gmContainer.visible = false;
     score.visible = false;
     myLevel.visible = false;
+    question.visible = false;
     goContainer.visible = true;
     const gameOver = new PIXI.Text("Game Over!", style1);
     gameOver.position.set(800, 100);
@@ -788,7 +817,9 @@ function onGameEnd() {
     cAnswer3 = "";
     cAnswer4 = "";
     cAnswer5 = "";
-    correctAnswers = [];
+    // correctAnswers = [];
+
+    // pairQuestions = [];
 
 
 }
@@ -863,10 +894,22 @@ function returnLevel() {
         level3 = false;
         level4 = false;
         level5 = true;
-    } else {
+    } else if (hooksCalled == 6) {
+        level1 = false;
+        level2 = false;
+        level3 = false;
+        level4 = false;
+        level5 = false;
 
+        console.log("About to return win!")
+
+        onGameWin();
+
+
+    } else {
+        console.log("No Level");
     }
-    console.log("No Level");
+
     levels = [level1, level2, level3, level4, level5];
 
     console.log("Hooks called = " + hooksCalled);
@@ -894,20 +937,34 @@ function returnQAnswers() {
         // for (key in datakeys) {
         let datavalues = data[Object.keys(data)[i]];
         for (const values in datavalues) {
-            qaList.push(`${datavalues[values]}`);
+            if (`${datavalues[values]}` !== 'undefined') {
+                console.log(typeof (`${datavalues[values]}`) == 'string');
+                qaList.push(`${datavalues[values]}`);
+                console.log("qaList" + qaList);
+            }
         }
 
     }
     for (const value in qaList) {
         tempList = `${qaList[value]}`
+        console.log("tempList" + tempList);
         newList.push(tempList);
     }
+    try {
 
-    pairQ1 = newList.slice(0, 4);
-    pairQ2 = newList.slice(4, 8);
-    pairQ3 = newList.slice(8, 12);
-    pairQ4 = newList.slice(12, 16);
-    pairQ5 = newList.slice(16, 20);
+
+
+        console.log("newList = " + newList);
+
+        pairQ1 = newList.slice(0, 4);
+        pairQ2 = newList.slice(4, 8);
+        pairQ3 = newList.slice(8, 12);
+        pairQ4 = newList.slice(12, 16);
+        pairQ5 = newList.slice(16, 20);
+
+
+
+    } catch (err) { "undefined pairs" }
 
     for (let i = 0; i < pairQ1.length; i++) {
         if (pairQ1[i].indexOf('*') > -1) {
@@ -963,15 +1020,16 @@ function getQandA(m1, m2, m3, q) {
     board3 = new PIXI.Text(m3.toString(), style3);
     question = new PIXI.Text(q.toString(), style3);
 
-    board1.position.set(800, 0);
-    board2.position.set(800, 300);
-    board3.position.set(800, 600);
+    board1.position.set(800, 100);
+    board2.position.set(800, 400);
+    board3.position.set(800, 700);
     question.position.set(500, 200);
 
     bContainer.addChild(board1);
     bContainer.addChild(board2);
     bContainer.addChild(board3);
-    bContainer.addChild(question);
+
+    question.visible = true;
     // console.log(board1.text, board2.text, board3.text, question.text);
     // console.log("boards: ", board1, "boards2" + board2);
     return board1, board2, board3, question;
@@ -1199,7 +1257,7 @@ const nftButton = new PIXI.Sprite(viewButton);
 nftButton.buttonMode = true;
 
 nftButton.anchor.set(0.5);
-nftButton.x = 920;
+nftButton.x = 910;
 nftButton.y = 440;
 
 // make the button interactive...
@@ -1233,6 +1291,7 @@ function onButtonDown() {
         if (typeof (data) == 'undefined') {
             alert("Please enter a valid CSV file!")
         } else {
+            initVars();
             buttonSFX.play();
 
             document.getElementById("myInput").style.display = 'none';
@@ -1240,12 +1299,13 @@ function onButtonDown() {
             document.getElementById("myForm").style.display = 'none';
 
             gameEnded = false;
-            xContainer.addChild(myLevel);
+
             myLevel.visible = false;
             returnQAnswers();
 
             pairQuestions.push(pairQ1, pairQ2, pairQ3, pairQ4, pairQ5);
             correctAnswers.push(cAnswer1, cAnswer2, cAnswer3, cAnswer4, cAnswer5);
+
             // console.log(pairQ1, pairQ2, cAnswer1, cAnswer2);
 
             console.log("correctAnswers.length" + correctAnswers.length);
@@ -1262,7 +1322,7 @@ function onButtonDown() {
             myInfo.visible = true;
             nftContainer.visible = false;
             popupContainer.visible = false;
-
+            onGameStart();
 
             player.position.set(app.view.width / 2, app.view.height / 2);
 
@@ -1275,17 +1335,20 @@ function onButtonDown() {
                 score.visible = true;
                 createHookQs();
                 myLevel.visible = true;
+
             }, 4000);
 
         }
     } else if (this == button2) {
-         togglePopupSFX.play();
-         this.texture = hscoreButton;
+        togglePopupSFX.play();
+        this.texture = hscoreButton;
         myHScore.visible = toggleFlag(myHScore.visible);
-       
+
 
     } else if (this == button3) {
+
         buttonSFX.play();
+        miniOnGameEnd();
         miniRemoveHQs();
         this.texture = homeButton;
         gmContainer.visible = false;
@@ -1297,6 +1360,7 @@ function onButtonDown() {
         bContainer.visible = false;
         nftContainer.visible = true;
         popupContainer.visible = true;
+        myLevel.visible = false;
 
 
         document.getElementById("myInput").style.display = 'block';
@@ -1309,8 +1373,9 @@ function onButtonDown() {
         goContainer.visible = false;
         bContainer.visible = false;
         this.texture = resetButton;
-        xContainer.addChild(myLevel);
         myLevel.visible = false;
+        initVars();
+
         returnQAnswers();
 
         pairQuestions.push(pairQ1, pairQ2, pairQ3, pairQ4, pairQ5);
@@ -1326,6 +1391,8 @@ function onButtonDown() {
         bkg2.visible = true;
         myInfo.visible = true;
         player.position.set(app.view.width / 2, app.view.height / 2);
+        onGameStart();
+
 
         setTimeout(function () {
 
@@ -1339,11 +1406,13 @@ function onButtonDown() {
             myLevel.visible = true;
             gameEnded = false;
 
+
         }, 4000);
 
 
 
     } else if (this == button5) {
+        miniOnGameEnd();
         miniRemoveHQs();
         buttonSFX.play();
         this.texture = homeButton2;
@@ -1353,6 +1422,7 @@ function onButtonDown() {
         popupContainer.visible = false;
         goContainer.visible = false;
         bContainer.visible = false;
+        myLevel.visible = false;
 
         document.getElementById("myInput").style.display = 'block';
         document.getElementById("csvFile").style.display = 'block';
@@ -1367,13 +1437,15 @@ function onButtonDown() {
 
         xContainer.addChild(myLevel);
         myLevel.visible = false;
+        initVars();
+        returnQAnswers();
         console.log("correctAnswers.length" + correctAnswers.length);
         console.log("levels.length" + levels.length);
         console.log(pairQ1.length)
-        returnQAnswers();
-        pairQuestions.push(pairQ1, pairQ2, pairQ3, pairQ4);
-        correctAnswers.push(cAnswer1, cAnswer2, cAnswer3, cAnswer4);
-        console.log(pairQ1, pairQ2, cAnswer1, cAnswer2);
+
+        pairQuestions.push(pairQ1, pairQ2, pairQ3, pairQ4, pairQ5);
+        correctAnswers.push(cAnswer1, cAnswer2, cAnswer3, cAnswer4, cAnswer5);
+        console.log("pairslog" + pairQ1, pairQ2, pairQ3, pairQ4, pairQ5);
 
 
         loadingSprite.visible = true;
@@ -1383,7 +1455,7 @@ function onButtonDown() {
         bkg2.visible = true;
         myInfo.visible = true;
         player.position.set(app.view.width / 2, app.view.height / 2);
-
+        onGameStart();
 
         setTimeout(function () {
             gmContainer.visible = true;
@@ -1395,6 +1467,7 @@ function onButtonDown() {
             createHookQs();
             myLevel.visible = true;
             gameEnded = false;
+
 
         }, 4000);
 
@@ -1569,22 +1642,112 @@ app.loader.load();
 app.stage.interactive = true;
 app.stage.on("pointermove", movePlayer);
 
+let playerReset = false;
+let timeout;
+
 
 function movePlayer(e) {
+    clearTimeout(timeout);
     let pos = e.data.global;
+    if (player.y != undefined) {
+        let diffY = pos.y - player.y
+    }
+    let angle1 = Math.atan2(pos.y, 1200) * (180 / Math.PI);
+
+    let angle2 = Math.atan2(player.y, 1200) * (180 / Math.PI);
+
+    function rotatePlayer() {
+
+
+        // if ((Math.abs(angle1 - angle2) * 20) < 35) {
+        //     player.angle = (angle1 - angle2) * 22;
+        //     console.log("Player Angle" + player.angle);
+        // }
+
+        if (between((Math.abs(angle1 - angle2) * 20), 0, 0.5)) {
+            player.angle = (angle1 - angle2);
+
+        } else if (between((Math.abs(angle1 - angle2) * 20), 0.5, 1)) {
+            player.angle = (angle1 - angle2) * 1.5;
+
+        } else if (between((Math.abs(angle1 - angle2) * 20), 1, 2.5)) {
+            player.angle = (angle1 - angle2) * 2;
+
+        } else if (between((Math.abs(angle1 - angle2) * 20), 2, 3)) {
+            player.angle = (angle1 - angle2) * 4;
+
+        } else if (between((Math.abs(angle1 - angle2) * 20), 3, 5)) {
+            player.angle = (angle1 - angle2) * 7;
+
+        } else if (between((Math.abs(angle1 - angle2) * 20), 5, 8)) {
+            player.angle = (angle1 - angle2) * 10;
+
+        } else if (between((Math.abs(angle1 - angle2) * 20), 9, 12)) {
+            player.angle = (angle1 - angle2) * 12;
+
+        } else if (between((Math.abs(angle1 - angle2) * 20), 12, 16)) {
+            player.angle = (angle1 - angle2) * 13;
+
+        } else if (between((Math.abs(angle1 - angle2) * 20), 16, 20)) {
+            player.angle = (angle1 - angle2) * 14;
+
+        } else if (between((Math.abs(angle1 - angle2) * 20), 20, 30)) {
+            player.angle = (angle1 - angle2) * 15;
+
+
+        } else if (between((Math.abs(angle1 - angle2) * 20), 30, 35)) {
+            player.angle = (angle1 - angle2) * 16;
+
+        }
+        console.log("Player Angle" + player.angle);
+
+    }
+
     if (delayStart == true) {
-        setTimeout(function () {
+        player.angle = 0;
 
-            player.y = pos.y;
-
-            delayStart = false;
-        }, 3000);
 
     }
     if (buttonStarted == true) {
 
+
+
         player.y = pos.y;
 
+        playerReset = true;
+        console.log("Pivot X: " + player.pivot.x);
+        console.log("Pivot Y: " + player.pivot.y);
+
+
+
+        console.log("Pos Y: " + pos.y);
+        console.log("Pos X: " + pos.x);
+
+
+        rotatePlayer();
+
+        // if ((Math.abs(angle1 - angle2) * 20) < 35) {
+        //     // player.angle = (angle1 - angle2) * 22;
+        //     // console.log("Player Angle" + player.angle);
+        // }
+
+
+        // if (playerReset == false) {
+        //     setTimeout(() => {
+        //         rotatePlayer();
+        //     }, 500)
+        // }
+
+
+        // timeout = setTimeout(function () {
+
+
+        //     player.angle = 0;
+        // }, 100);
+
+    }
+    if (gameEnded == true) {
+        player.angle = 0;
     }
 
 
@@ -1605,6 +1768,7 @@ function updateBg() {
     hookPosf = (bgH / 3) + 30;
     if (buttonStarted == true) {
 
+
         bgH = (bgH + bgSpeed);
         scoreCounter += 1;
 
@@ -1615,7 +1779,9 @@ function updateBg() {
 
 
 
-        if (hooksPlay == true && moveQAs == false) {
+        if (hooksPlay == true && moveQAs == false && gameWon == false && gameEnded == false) {
+
+
             if (bgH < 2422) {
                 console.log("hookQs x " + hookQs[0].x);
 
@@ -1665,7 +1831,7 @@ function updateBg() {
                         // console.log(hooksRemoved);
 
 
-                        hookCombo[i].x = (bgH / 3) + (30 * (i + 1));
+                        hookCombo[i].x = (bgH / 3) + 120 - (28 * (i + 1));
                         hookQs[i].x = (bgH / 3) + (30 * (i + 1));
 
 
@@ -1680,35 +1846,35 @@ function updateBg() {
 
                         for (let i = 0; i < 3; i++) {
                             // console.log("HookQsR Pos: " + hookQsR[i].x);
-                            hookQsR[i].x = (bgH / 3) + (30 * (i + 1)) - 90;
-                            hookQsW[i].x = (bgH / 3) + (30 * (i + 1)) - 90;
+                            hookQsR[i].x = (bgH / 3) + (30 * (i + 1));
+                            hookQsW[i].x = (bgH / 3) + (30 * (i + 1));
                         }
                         // console.log("hookQsR Pos:" + hookQsR[0].x + 40);
                     }
                     if (checker(hookQsvis)) {
                         console.log("QSvis" + checker(hookQsvis));
                         bContainer.visible = true;
-                        board1.visible = true;
-                        board2.visible = true;
-                        board3.visible = true;
-                        question.visible = true;
+                        // board1.visible = true;
+                        // board2.visible = true;
+                        // board3.visible = true;
+                        // question.visible = true;
 
-                        board1.x = hookQs[0].x + 40;
-                        board2.x = hookQs[1].x + 40;
-                        board3.x = hookQs[2].x + 40;
+                        board1.x = hookQs[0].x + 35;
+                        board2.x = hookQs[1].x + 35;
+                        board3.x = hookQs[2].x + 35;
 
-                        board1.y = hookQs[0].y + 40;
-                        board2.y = hookQs[1].y + 40;
-                        board3.y = hookQs[2].y + 40;
+                        board1.y = hookQs[0].y + 55;
+                        board2.y = hookQs[1].y + 55;
+                        board3.y = hookQs[2].y + 55;
                     }
                     else if (checker(hookQsRvis)) {
                         // console.log("QsRvis" + checker(hookQsRvis));
                         bContainer.visible = true;
 
-                        board1.visible = true;
-                        board2.visible = true;
-                        board3.visible = true;
-                        question.visible = true;
+                        // board1.visible = true;
+                        // board2.visible = true;
+                        // board3.visible = true;
+                        // question.visible = true;
 
                         board1.x = hookQsR[0].x + 130;
                         board2.x = hookQsR[1].x + 130;
@@ -1781,6 +1947,7 @@ function updateBg() {
 
     if (delayStart == true) {
         bgSpeed -= 0.10;
+        console.log("delayStart + speed")
 
     }
     // console.log(delayStart == true)
@@ -1830,26 +1997,31 @@ function updateBg() {
 //CHECK IF QUESTION ANSWER IS CORRECT
 
 function checkAnswer() {
-console.log("checking Answer");
-console.log(hookQs[0].x);
+    console.log("checking Answer");
+    console.log(hookQs[0].x);
+
     if (bgH < 2422) {
+        console.log("player y: " + player.y);
         for (let i = 0; i < correctAnswers.length; i++) {
+            console.log(correctAnswers);
+            console.log(" level check: " + levels[i]);
             if (levels[i] == true) {
                 if (between(player.y, 104, 264)) {
+                    console.log("correct answer" + correctAnswers[i]);
                     if (pairQuestions[i][0] == correctAnswers[i].replace('*', '')) {
                         buttonSFX.play();
                         console.log("Your Answer is Correct");
-                        
+
                         onLevelWin();
                     } else {
                         console.log("Your Answer = " + pairQuestions[i][0])
                         console.log(pairQuestions);
-                        console.log(correctAnswers);
+                        console.log("correct answers" + correctAnswers);
                         console.log("Correct Answer = " + correctAnswers[i])
                         onGameEnd();
                     }
                 }
-                else if (between(player.y, 287, 540)) {
+                else if (between(player.y, 287, 570)) {
 
                     if (pairQuestions[i][1] == correctAnswers[i].replace('*', '')) {
                         buttonSFX.play();
@@ -1893,13 +2065,13 @@ console.log(hookQs[0].x);
 
 
 // GameEnd Logic for Home buttons
-function resetDataPairs() {
-    pairQ1 = []
-    pairQ2 = []
-    pairQ3 = []
-    pairQ4 = []
-    pairQ5 = []
-}
+// function resetDataPairs() {
+//     pairQ1 = []
+//     pairQ2 = []
+//     pairQ3 = []
+//     pairQ4 = []
+//     pairQ5 = []
+// }
 
 function removeQBoards() {
 
@@ -1911,6 +2083,8 @@ function removeQBoards() {
         xContainer.removeChild(hookQsR[i]);
         xContainer.removeChild(hookQsW[i]);
     }
+
+
     hookUp = [];
     hookQs = [];
     hookCombo = [];
@@ -1927,10 +2101,10 @@ function miniRemoveHQs() {
     bContainer.removeChild(board1);
     bContainer.removeChild(board2);
     bContainer.removeChild(board3);
-    bContainer.removeChild(question);
+    fgContainer.removeChild(question);
 
     removeQBoards();
-    resetVars();
+
     gameEnd();
     hooksCreated = false;
     hooksRemoved = false;
@@ -1957,63 +2131,58 @@ function miniRemoveHQs() {
 }
 
 function checkAnsColor() {
-    if (hookQs[0].x < (app.screen.width / 2)) {
+    if (bgH < 2422) {
+        console.log("player y: " + player.y);
         for (let i = 0; i < correctAnswers.length; i++) {
             if (levels[i] == true) {
-                if (between(player.y, 104, 264)) {
-                    if (pairQuestions[i][0] == correctAnswers[i].replace('*', '')) {
+                try {
+                    if (between(player.y, 104, 264)) {
 
-                        hookQsR[0].visible = true;
-                        hookQsR[1].visible = false;
-                        hookQsR[2].visible = false;
-                        hookQsW[0].visible = false;
-                        hookQsW[1].visible = true;
-                        hookQsW[2].visible = true;
+                        if (pairQuestions[i][0] == correctAnswers[i].replace('*', '')) {
 
+                            hookQsR[0].visible = true;
+                            hookQsR[1].visible = false;
+                            hookQsR[2].visible = false;
+                            hookQsW[0].visible = false;
+                            hookQsW[1].visible = true;
+                            hookQsW[2].visible = true;
+
+
+                        }
+                    }
+                    else if (between(player.y, 287, 570)) {
+
+                        if (pairQuestions[i][1] == correctAnswers[i].replace('*', '')) {
+
+                            hookQsR[0].visible = false;
+                            hookQsR[1].visible = true;
+                            hookQsR[2].visible = false;
+                            hookQsW[0].visible = true;
+                            hookQsW[1].visible = false;
+                            hookQsW[2].visible = true;
+
+                        }
+                    }
+                    else if (between(player.y, 655, 815)) {
+
+                        if (pairQuestions[i][2] == correctAnswers[i].replace('*', '')) {
+
+                            hookQsR[0].visible = false;
+                            hookQsR[1].visible = false;
+                            hookQsR[2].visible = true;
+                            hookQsW[0].visible = true;
+                            hookQsW[1].visible = true;
+                            hookQsW[2].visible = false;
+
+
+                        }
 
                     }
+                } catch (err) {
+                    console.log("pair Questions value" + pairQuestions[i][0]);
+                    console.log("correctAnswers[i] value" + correctAnswers[i].replace('*', ''));
                 }
-                else if (between(player.y, 287, 540)) {
 
-                    if (pairQuestions[i][1] == correctAnswers[i].replace('*', '')) {
-
-                        hookQsR[0].visible = false;
-                        hookQsR[1].visible = true;
-                        hookQsR[2].visible = false;
-                        hookQsW[0].visible = true;
-                        hookQsW[1].visible = false;
-                        hookQsW[2].visible = true;
-
-                    } else {
-
-
-                    }
-                }
-                else if (between(player.y, 655, 815)) {
-
-                    if (pairQuestions[i][2] == correctAnswers[i].replace('*', '')) {
-
-                        hookQsR[0].visible = false;
-                        hookQsR[1].visible = false;
-                        hookQsR[2].visible = true;
-                        hookQsW[0].visible = true;
-                        hookQsW[1].visible = true;
-                        hookQsW[2].visible = false;
-
-
-                    } else {
-
-                    }
-                }
-                //  else {
-                //     hookQsR[0].visible = false;
-                //     hookQsR[1].visible = false;;
-                //     hookQsR[2].visible = false;
-                //     hookQsW[0].visible = false;
-                //     hookQsW[1].visible = false;
-                //     hookQsW[2].visible = false;
-
-                // }
 
             }
         }
@@ -2048,26 +2217,107 @@ function removeHookQs() {
         hookQsW[i].visible = true;
         hookUp[i].visible = true;
 
-        hookUp[i].loop = false;
+
+
+    }
+
+    for (let i = 0; i < 3; i++) {
+        hookUp[i].visible = true;
+        hookUp[i].loop = true;
+
+        if (hookUp[i].playing == false) {
+
+            console.log("not playing yet, current frame = " + hookUp[i].currentFrame);
+        }
+        hookUp[i].animationSpeed = 1;
+
+        // hookUp[i].onLoop = function () {
+        //     // hookUp[i].stop();
+        //     hookUp[i].animationSpeed = 0;
+        //     console.log("resetting animation speed.")
+        // }
+
+        hookUp[i].onLoop = function () {
+
+            if (hookUp[i].playing) {
+                hookUp[i].animationSpeed = 0;
+                hookUp[i].visible = false;
+            }
+
+
+        }
+
+
+    }
+    // setTimeout(() => {
+    //     try {
+    //         for (let i = 0; i < 3; i++) {
+    //             console.log("resetting animation speed.")
+    //             hookUp[i].animationSpeed = 0;
+    //             // hookUp[i].visible = false;
+    //             // hookUp[i].stop();
+    //         }
+
+    //     } catch (err) { };
+
+    // }, 612);
+
+    for (let i = 0; i < 3; i++) {
         hookUp[i].play();
+
+        // if (hookUp[i].currentFrame == 36) {
+        //     console.log("resetting animation speed.")
+        //     hookUp[i].animationSpeed = 0;
+        // }
 
         console.log("Animating question board");
 
 
-        hookQsR[i].loop = false;
-        hookQsR[i].play();
+
+        // hookQsR[i].loop = false;
+        // hookQsR[i].animationSpeed = 1;
+    }
+
+
+    // setTimeout(() => {
+    //     for (let i = 0; i < 3; i++) {
+    //         console.log("resetting animation speed 2.")
+    //         // hookQsR[i].animationSpeed = 0;
+    //         hookQsR[i].loop = true;
+    //     }
+    // }, 848.99992);
+
+    // for (let i = 0; i < 3; i++) {
+    //     // hookQsR[i].play();
 
 
 
-        hookQsW[i].loop = false;
-        hookQsW[i].play();
+
+    //     hookQsW[i].loop = false;
+    //     hookQsW[i].animationSpeed = 1;
+    // }
+
+    // setTimeout(() => {
+    //     for (let i = 0; i < 3; i++) {
+    //         console.log("resetting animation speed 3.")
+    //         // hookQsW[i].animationSpeed = 0;
+    //         hookQsW[i].loop = false;
+
+
+    //     }
+
+    // }, 848.99992);
+
+
+    for (let i = 0; i < 3; i++) {
+        // hookQsW[i].play();
         hookRemoveSFX.play();
 
 
         // hookCombo[i].play();
         // hookCombo[i].loop = false;
-    }
 
+    }
 
     //Text Logic
 
@@ -2076,14 +2326,16 @@ function removeHookQs() {
     console.log("Player is ahead of hookPosf");
 
     console.log("gameEnded = " + gameEnded);
-   
 
+
+    if (gameEnded == false) {
         checkAnsColor();
         checkAnswer();
+    }
 
 
 
-        console.log(gameEnded);
+    console.log(gameEnded);
 
 
 
@@ -2095,12 +2347,13 @@ function createHookQs() {
     console.log(gameEnded);
 
 
-
+    hookPlay();
     // Blank Question Board Creation
 
-    hookPlay();
+
     console.log("Hooks created!");
-    const hkDTextures = [];
+    let hkDTextures = [];
+    hkDTextures = [];
     const hqTexture = PIXI.Texture.from(`../Game Files/Sprites/backgroundItems/BackgroundItems/Final/Hook/hookQuestion.png`);
     for (let i = 0; i < 37; i++) {
         const hkDTexture = PIXI.Texture.from(`../Game Files/Sprites/GameSprites/Hook/HookD/frame_${i}_delay-0.1s.png`);
@@ -2109,6 +2362,27 @@ function createHookQs() {
 
 
 
+
+    // Hook Creation
+
+    for (let i = 0; i < 3; i++) {
+        const hookC = new PIXI.AnimatedSprite(hkDTextures);
+        hookC.visible = false;
+        console.log(typeof (hookC));
+        hookC.position.set(1420 - (30 * (i + 1)), -150 - (300 * (i + 1)));
+        // hook.loop = false;
+        // hook.onLoop = function () {
+        //     hook.loop = false;
+        //     // hook.stop();
+        // }
+        hookC.scale.set(1.5, 1.5);
+        hookC.animationSpeed = 1 + (0.1 * (i + 1));
+
+        hookCombo.push(hookC);
+
+        xContainer.addChild(hookCombo[i]);
+
+    }
     for (let i = 0; i < 3; i++) {
         const hookQ = new PIXI.Sprite.from(hqTexture);
         hookQ.position.set(1300 + (30 * (i + 1)), -200 + (300 * (i + 1)));
@@ -2121,27 +2395,6 @@ function createHookQs() {
         console.log("added " + hookQs[i]);
     }
 
-    // Hook Creation
-
-    for (let i = 0; i < 3; i++) {
-        const hook = new PIXI.AnimatedSprite(hkDTextures);
-        hook.visible = false;
-        console.log(typeof (hook));
-        hook.position.set(1300 + (30 * (i + 1)), -1350 + (300 * (i + 1)));
-        // hook.loop = false;
-        // hook.onLoop = function () {
-        //     hook.loop = false;
-        //     // hook.stop();
-        // }
-        hook.scale.set(1.5, 1.5);
-        hook.animationSpeed = 1 + (0.1 * (i + 1));
-
-        hookCombo.push(hook);
-
-        xContainer.addChild(hookCombo[i]);
-
-    }
-
     for (let i = 0; i < 3; i++) {
 
 
@@ -2152,9 +2405,13 @@ function createHookQs() {
     }
 
 
-    const hkUTextures = [];
-    const hQRTextures = [];
-    const hQWTextures = [];
+    let hkUTextures = [];
+    // let hQRTextures = [];
+    // let hQWTextures = [];
+
+    hkUTextures = [];
+    // hQRTextures = [];
+    // hQWTextures = [];
 
 
     for (let i = 0; i < 37; i++) {
@@ -2162,41 +2419,53 @@ function createHookQs() {
         hkUTextures.push(hkUTexture);
     }
 
-    for (let i = 0; i < 49; i++) {
-        const hQRTexture = PIXI.Texture.from(`../Game Files/Sprites/GameSprites/Hook/HQR/frame_${i}_delay-0.05s.png`);
-        hQRTextures.push(hQRTexture);
-    }
-    for (let i = 0; i < 49; i++) {
-        const hQWTexture = PIXI.Texture.from(`../Game Files/Sprites/GameSprites/Hook/HQW/frame_${i}_delay-0.05s.png`);
-        hQWTextures.push(hQWTexture);
-    }
+    // for (let i = 0; i < 51; i++) {
+    //     const hQRTexture = PIXI.Texture.from(`../Game Files/Sprites/GameSprites/Hook/HQR/frame_${i}_delay-0.05s.png`);
+    //     hQRTextures.push(hQRTexture);
+    // }
 
+    const hQRTexture = PIXI.Texture.from(`../Game Files/Sprites/GameSprites/Hook/hookQuestionR.png`);
 
+    // for (let i = 0; i < 51; i++) {
+    //     const hQWTexture = PIXI.Texture.from(`../Game Files/Sprites/GameSprites/Hook/HQW/frame_${i}_delay-0.05s.png`);
+    //     hQWTextures.push(hQWTexture);
+    // }
+
+    const hQWTexture = PIXI.Texture.from(`../Game Files/Sprites/GameSprites/Hook/hookQuestionW.png`);
 
     for (let i = 0; i < 3; i++) {
 
-        const hook = new PIXI.AnimatedSprite(hkUTextures);
-        hook.position.set(middle + (30 * (i + 1)), -1350 + (300 * (i + 1)));
+        const hookU = new PIXI.AnimatedSprite(hkUTextures);
+        hookU.position.set(810 + (30 * (i + 1)), -1350 + (300 * (i + 1)));
 
-        hook.scale.set(1.5, 1.5);
-        hook.animationSpeed = 1 + (0.1 * i);
-        hook.loop = false;
+        hookU.scale.set(1.5, 1.5);
+        hookU.animationSpeed = 1 + (0.1 * i);
+        hookU.loop = false;
         // hook.onLoop = function () {
         //     hook.loop = false;
         //     // hook.stop();
         // }
 
-        hook.visible = false;
-        hookUp.push(hook);
+        hookU.visible = false;
+        // hookU.onFrameChange = function () {
+        //     console.log("Hookup Frame Changed.")
+        //     // updated!
+        // };
+        // hookU.onComplete = function () {
+        //     hookU.currentFrame = 0;
+        // }
+        hookUp.push(hookU);
         xContainer.addChild(hookUp[i]);
+        console.log("new freaking Hooks" + hookUp.length + " " + i);
+
 
     }
     for (let i = 0; i < 3; i++) {
 
-        const hookQR = new PIXI.AnimatedSprite(hQRTextures);
-        hookQR.position.set(app.screen.width + 500, -300 + (300 * (i + 1)) + 40);
+        const hookQR = new PIXI.Sprite.from(hQRTexture);
+        hookQR.position.set(app.screen.width + 500, -200 + (300 * (i + 1)));
         hookQR.scale.set(0.5, 0.5);
-        hookQR.animationSpeed = 0.9 + (0.1 * (i + 1));
+        // hookQR.animationSpeed = 1;
         hookQR.visible = false;
         // hookQR.loop = false;
         // hookQR.onLoop = function () {
@@ -2210,10 +2479,10 @@ function createHookQs() {
 
 
 
-        const hookQW = new PIXI.AnimatedSprite(hQWTextures);
-        hookQW.position.set(app.screen.width + 500, -300 + (300 * (i + 1)) + 40);
+        const hookQW = new PIXI.Sprite.from(hQWTexture);
+        hookQW.position.set(app.screen.width + 500, -200 + (300 * (i + 1)));
         hookQW.scale.set(0.5, 0.5);
-        hookQW.animationSpeed = 0.9 + (0.1 * (i + 1));
+        // hookQW.animationSpeed = 1;
         hookQW.visible = false;
         // hookQW.loop = false;
         // hookQW.onLoop = function () {  
@@ -2251,34 +2520,35 @@ function hookPlay() {
 
         getQandA("0", "1", "2", "3");
         console.log("got Q&As");
-
+        fgContainer.addChild(question);
 
     }
     if (hooksCreated == true) {
-        
+
+
+        if (hooksCreated < 6) {
+
+            for (let i = 0; i < 3; i++) {
+
+                hookQsR[i].visible = false;
+                hookQsW[i].visible = false;
+                hookQs[i].visible = true;
+
+
+            }
+
+            // Replaying Hooks
+            for (let i = 0; i < 3; i++) {
+
+                hookCombo[i].loop = false;
+
+                hookCombo[i].visible = true;
+                hookCombo[i].play();
+                hookSplashSFX.play();
 
 
 
-        for (let i = 0; i < 3; i++) {
-
-            hookQsR[i].visible = false;
-            hookQsW[i].visible = false;
-            hookQs[i].visible = true;
-
-
-        }
-
-        // Replaying Hooks
-        for (let i = 0; i < 3; i++) {
-            
-            hookCombo[i].loop = false;
-
-            hookCombo[i].visible = true;
-            hookCombo[i].play();
-            hookSplashSFX.play();
-
-
-
+            }
         }
         hooksRemoved = false;
         moveQAs = false;
@@ -2287,7 +2557,7 @@ function hookPlay() {
             hooksCalled += 1;
             returnLevel();
 
-        } else if (hooksCalled > 0 && hooksCalled < 6) {
+        } else if (hooksCalled > 0 && hooksCalled < 7) {
             hooksCalled += 1;
             returnLevel();
         }
@@ -2311,7 +2581,14 @@ function hookPlay() {
         if (level1) {
             console.log(pairQ1[0], pairQ1[1], pairQ1[2], pairQ1[3]);
             updateQandA(pairQ1[0], pairQ1[1], pairQ1[2], pairQ1[3]);
-            bgSpeed += 5
+
+            // for (let i = 0; i < 8; i++) {
+            //     if (bgSpeed < minSpeed) {
+            //     bgSpeed += 1
+            //     console.log("speed" + bgSpeed);
+            //     }
+            // }
+
 
 
         }
@@ -2326,22 +2603,41 @@ function hookPlay() {
             updateQandA(pairQ4[0], pairQ4[1], pairQ4[2], pairQ4[3]);
         } else if (level5) {
             updateQandA(pairQ5[0], pairQ5[1], pairQ5[2], pairQ5[3]);
-            bgSpeed += 10
+
+            // for (let i = 0; i < 11; i++) {
+            //     if (bgSpeed < minSpeed) {
+            //     bgSpeed += 1
+            //     console.log("speed" + bgSpeed);
+
+            //     }
+            // }
+        }
+        if (hooksCalled < 6) {
+            hooksPlay = true;
+            console.log(gameEnded);
+        } else {
+            hooksPlay = false;
         }
 
-
-
-
-
-        hooksPlay = true;
-        console.log(gameEnded);
 
 
     }
 
 
+}
+
+//Will move most of start game procedures into this function
+function onGameStart() {
+    setTimeout(function () {
+
+
+        delayStart = false;
+    }, 3000);
+
 
 }
+
+//A function that creates the high score & NFT Images displays;
 function gameEnd() {
     scores.push(scoreCounter);
     myHScore.text = "High Scores           "
@@ -2358,10 +2654,12 @@ function gameEnd() {
 
 
 function initLevel() {
+    technoMusic.play();
+
     // validate();
     getScore(scoreCounter);
     score.visible = false;
-    xContainer.addChild(score);
+
 
     //Initialize Background Images
     bkg = new PIXI.TilingSprite(app.loader.resources["bkg"].texture, app.screen.width, app.screen.height);
@@ -2459,7 +2757,19 @@ function initLevel() {
     fgMiddle = createBg(app.loader.resources["fgMiddle"].texture);
 
 
+
     fgContainer.addChild(player);
+
+    fgContainer.addChild(bkgFilter);
+
+    fgContainer.addChild(myInfo);
+
+    fgContainer.addChild(score);
+
+    fgContainer.addChild(correct);
+
+    fgContainer.addChild(myLevel);
+
 
 
     fgFront = createFg(app.loader.resources["fgFront"].texture);
@@ -2535,32 +2845,32 @@ function createBg(texture) {
 }
 
 function switchDir(e) {
-    let maxSpeed = -29;
-    let minSpeed = -3;
-    let sIncrement = 1;
+    maxSpeed = -24;
+    minSpeed = -6;
+    sIncrement = 1;
     // console.log(e.keyCode);
     switch (e.keyCode) {
-    
+
         case 39:
             // right arrow
 
-                if (bgSpeed > maxSpeed && delayStart == false) {
+            if (bgSpeed > maxSpeed && buttonStarted == true) {
 
-            console.log("increasing speed");
+                console.log("increasing speed");
                 bgSpeed -= sIncrement
-                } else {
-                    console.log("max speed: " + maxSpeed);
-                }
+            } else {
+                console.log("max speed: " + maxSpeed);
+            }
             break;
         case 37:
             if (bgSpeed < minSpeed && delayStart == false) {
 
                 console.log("decreasing speed");
-                    bgSpeed += sIncrement
-                    } else {
-                        console.log("min speed: " + minSpeed);
-                    }
-      
+                bgSpeed += sIncrement
+            } else {
+                console.log("min speed: " + buttonStarted == true);
+            }
+
             break;
         case 32:
 
