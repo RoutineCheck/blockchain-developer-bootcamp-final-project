@@ -1,23 +1,104 @@
-The concept that I ended up doing was an educational cryptocurrency & math game you could implement into your LMS application, with a real, usable in-game NFT platform to view, buy and trade NFTS.
+# 🏗 Scaffold-ETH - 🎟 Fish.IO Project - Paul Kasaija - Ethereum Address: 0xd58CEC75CAF882E3F904215a1c716E4C7d9Aa578
 
-In CryptoZombies, each Zombie object created with CreateRandomZombie() was linked to a zombieId from _createZombie, which is mapped to an address. The mapping ownerZombieCount[] is then incremented. zombieToOwner[] links the newly created zombie to the address.  These mean that each new instance of zombies can later be added to the blockchain (recognized as owned by you). [More research needed]
-However, in the backend CryptoZombies has images linked to the characters in the hashed zombieId, which allows for customization and then production of a unique zombie Token every time.
+> Build, mint, and send around your own ERC721 (using Scaffold-Eth simple-nft-project as template)
 
-
-Fish.io is the project I am making, with the features of CryptoZombies and more, where each fish will be a unique token. The catch is that the math game will be the main part, where you have to answer the questions with increasing difficulty and once you've beat the level, you catch a new "fish". Additionally, the NFT platform will have a UI to track your fish, buy others using ETH and to trade your fish for others. This is a very expandable idea and covers many concepts learned within the course, though for this implementation it will cover just the basic mathematics module.
+📱 Open http://localhost:3000 to see the NFTs in your account, which contains an iframe to play the game, OR the (in-development) app itself, "🛳https://fishio-app.herokuapp.com/🛳. The NFT display in-app is still in progress, but it is fully visible on rinkeby.etherscan.io/0xd24bF2b41EBa0c5caDe0F02484a33B54432b91FF and on localhost:3000/transfers
 
 
-The Javascript + CSS + HTML front-end uses PIXI.js as a framework, due to its compatibility with WebGL 2, and its mutability in comparison to other rigid frameworks like GDevelop. Nonetheless, the solidity portion is still a work in-progress due to the nature of my project being a game which can only be built with clear functionality before even adding the NFT layer. I just completed the game logic, of over 2000 code lines (although highly simplified within Pixi.js framework), and I plan to complete the solidity portion within the week, tops. 
+> The main game, 🛳https://fishio-app.herokuapp.com/🛳, mints NFTs automatically upon passing the 5th level, no scripts required 🛰
 
-The point of the game is demonstrative, and can be expanded more upon with the use of NFTs and a microeconomy of users who trade them.
+# 🏃‍♀️ Quick Start
+Required: [Node](https://nodejs.org/dist/latest-v12.x/) plus [Yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable) and [Git](https://git-scm.com/downloads)
+
+```
+git clone this file
+```
+```
+
+yarn install
+yarn start
+```
+
+> in a second terminal window, start your 📱 frontend:
+
+```
+cd fish-io-project
+yarn chain
+```
+
+> in a third terminal window, 🛰 deploy your contract:
+
+```
+cd fish-io-project
+yarn deploy --network['rinkeby']
+```
+
+> in a fourth terminal window, ✏️ test your contract:
+
+```
+cd fish-io-project
+cd packages
+cd hardhat
+npx hardhat compile
+npx hardhat test
+
+```
 
 
-Currently Implementing these Solidity Functions:
+``` Scaffold-eth notes:
+✏️ Edit the mint script mint.js in packages/hardhat/scripts and update the toAddress to your frontend address (wallet address in the top right or localhost:3000).
 
-View NFTs that were minted / earned during the game process
-
-View the type of Fish(es) that the user owns
+👀 You should see your collectibles show up if you minted to the correct address:
 
 
-View total number of fish NFTs minted 
+👛 Open an incognito window and navigate to http://localhost:3000 (You'll notice it has a new wallet address).
 
+⛽️ Grab some gas for each account using the faucet:
+
+🎟 Send an NFT to the incognito window address:
+
+
+🕵🏻‍♂️ Inspect the `Debug Contracts` tab to figure out what address is the `owner` of `YourCollectible`?
+
+💼 Edit your deployment script `deploy.js` in `packages/hardhat/scripts`
+
+🔏 Edit your smart contract `YourCollectible.sol` in `packages/hardhat/contracts`
+
+📝 Edit your frontend `App.jsx` in `packages/react-app/src`
+
+🔑 Create wallet links to your app with `yarn wallet` and `yarn fundedwallet`
+
+⬇️ Installing a new package to your frontend? You need to `cd packages/react-app` and then `yarn add PACKAGE`
+
+# 📡 Deploy NFT smart contract!
+
+🛰 Ready to deploy to a testnet?
+> Change the `defaultNetwork` in `packages/hardhat/hardhat.config.js`
+
+
+🔐 Generate a deploy account with `yarn generate`
+
+
+👛 View your deployer address using `yarn account` (You'll need to fund this account. Hint: use an instant wallet to fund your account via QR code)
+
+
+👨‍🎤 Deploy your NFT smart contract:
+
+Make sure your target network is present in the hardhat networks config, then either update the default network in `hardhat.config.js` to your network of choice or run:
+
+```
+yarn deploy --network NETWORK_OF_CHOICE
+```
+> ✏️ Edit your frontend `App.jsx` in `packages/react-app/src` to change the `targetNetwork` to wherever you deployed your contract:
+
+
+You should see the correct network in the frontend:
+
+
+
+
+
+------------
+
+
+🙏 Please check out Scaffold.Eth's [Gitcoin grant](https://gitcoin.co/grants/2851/scaffold-eth) too!

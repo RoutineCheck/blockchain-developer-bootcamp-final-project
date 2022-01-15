@@ -1,0 +1,5 @@
+Testnet Contract address:
+0xd24bF2b41EBa0c5caDe0F02484a33B54432b91FF
+
+Network:
+Rinkeby
