@@ -3,8 +3,7 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import WalletLink from "walletlink";
 import { Alert, Button, Card, Col, Input, List, Menu, Row } from "antd";
 import "antd/dist/antd.css";
-import React, { useCallback, useEffect, useState, useRef } from "react";
-import * as PIXI from "pixi.js";
+import React, { useCallback, useEffect, useState } from "react";
 import ReactJson from "react-json-view";
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
@@ -32,7 +31,6 @@ const { BufferList } = require("bl");
 // https://www.npmjs.com/package/ipfs-http-client
 const ipfsAPI = require("ipfs-http-client");
 const ipfs = ipfsAPI({ host: "ipfs.infura.io", port: "5001", protocol: "https" });
-import * as MainFn from "./main3.js";
 import Iframe from 'react-iframe';
 import { useContractConfig } from "./hooks";
 import Portis from "@portis/web3";
@@ -209,54 +207,14 @@ const web3Modal = new Web3Modal({
 function App(props) {
   const [hidden, setHidden] = useState(false);
   const [hidden2, setHidden2] = useState(true);
-  function createApp() {
-  return MainFn.globalFunction(), MainFn.startBtnSpr, MainFn.startBtnOvrSpr;
-  
-  }
-  
-const jsFile = "<iframe src='https://platform.twitter.com/widgets/tweet_button.html'></iframe>";
-  function MyComponent() {
 
 
- 
-    // On first render create our application
-
-    // Add app to DOM
-    if (newRef.current != null) {
-    
-	
-    console.log("starting Pixi.js");
-    
-    
-}
-    return () => {
-      // On unload completely destroy the application and all of it's children
-      app.destroy(true, true);
-    };
-
- 
-  return <div ref={newRef} />;
-}
-const newRef = React.createRef();
 function onClick() {
 	setHidden(true); 
 	setHidden2(false);
-	MyComponent();
+	
 
 }
- const [name, setName] = useState("");
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    alert(`The name you entered was: ${name}`)
-    
-  }
-    const handleCSVSubmit = (event) => {
-    event.preventDefault();
-    alert("File uploaded successfully")
-    
-    
-  }
 
   const mainnetProvider =
     poktMainnetProvider && poktMainnetProvider._isProvider
@@ -828,7 +786,7 @@ function onClick() {
                 
       </div>}
       {/*Adding the smart contract files inside the Heroku App so that they can be called simultaneously via specified "Contract Functions" which are actually wrappers of existing code above. Since the heroku app is deployed to Rinkeby, these functions can be called simultaneously within the iFrame game because server will call the Contract Functions.*/}
-            <div ref={newRef} />
+            
 
            
             {/*
