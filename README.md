@@ -2,10 +2,10 @@
 
 > Build, mint, and send around your own ERC721 (using Scaffold-Eth simple-nft-project as template)
 
-📱 Open http://localhost:3000 to see the NFTs in your account, which contains an iframe to play the game, OR the (in-development) app itself, "🛳https://fishio-app.herokuapp.com/🛳. The NFT display in-app is still in progress, but it is fully visible on rinkeby.etherscan.io/0xd24bF2b41EBa0c5caDe0F02484a33B54432b91FF and on localhost:3000/transfers
+📱 Open http://localhost:3000 to see the NFTs in your account, which contains an iframe to play the game, OR the (in-development) app itself🛳, https://fishio-app.herokuapp.com/  .🛳 The NFT display in-app is still in progress, but it is fully visible on rinkeby.etherscan.io/0xd24bF2b41EBa0c5caDe0F02484a33B54432b91FF and on localhost:3000/transfers
 
 
-> The main game, 🛳https://fishio-app.herokuapp.com/🛳, mints NFTs automatically upon passing the 5th level, no scripts required 🛰
+> The main game 🛳, https://fishio-app.herokuapp.com/  ,🛳 mints NFTs automatically upon passing the 5th level, no scripts required 🛰
 
 # 🏃‍♀️ Quick Start
 Required: [Node](https://nodejs.org/dist/latest-v12.x/) plus [Yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable) and [Git](https://git-scm.com/downloads)
