@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="main.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fish.io</title>
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="./html_favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./html_favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./html_favicon/favicon-16x16.png">
+    <link rel="manifest" href="./html_favicon/site.webmanifest">
+    <link rel="mask-icon" href="./html_favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+
+
+</head>
+
+<body>
+    
+    <script id="myApp" src="./node_modules/pixi.js/dist/browser/pixi.min.js"></script>
+    <script src="./node_modules/@pixi/graphics-extras/dist/browser/graphics-extras.min.js"></script>
+    <form class = "form" id="myForm">
+        <input type="file" id="csvFile" accept=".csv" />
+        <br />
+        <input class = "button" type="submit" value="Submit" />
+        <br>
+
+    </form>
+    
+    <form class = "form" id="myInput"> 
+        <input id = "inputFish" placeholder="fish name, e.g. Big Grey">
+        <br>
+        
+
+        <input class = "button" id = "submit" type="submit" value="Input">
+    </form>
+    <form class = "form"  id = "cMetamask">
+        <input class = "button" id = "onboard" type="submit" value="Connect to Metamask">
+    </form>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script src="web3.min.js"></script>
+    <script src="https://cdn.ethers.io/scripts/ethers-v4.min.js"
+    charset="utf-8"
+    type="text/javascript">
+</script>
+    <script type="module" src="./main3.js" defer></script>
+    <script src="./node_modules/howler/dist/howler.min.js"></script>
+</body>
+
+</html>
