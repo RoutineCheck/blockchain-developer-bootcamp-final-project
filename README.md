@@ -30,7 +30,7 @@ yarn chain
 
 ```
 cd fish-io-project
-yarn deploy --network['rinkeby']
+yarn deploy --network rinkeby
 ```
 
 > in a fourth terminal window, ✏️ test your contract:
