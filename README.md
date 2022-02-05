@@ -14,11 +14,14 @@
 # 🏃‍♀️ Quick Start - ONLY FOR TESTING - Deploys contract to localHost rather than Rinkeby to ensure quick and efficient testing
 Required: [Node](https://nodejs.org/dist/latest-v12.x/) plus [Yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable) and [Git](https://git-scm.com/downloads)
 
+If you get this error: ```00h00m00s 0/0: : ERROR: [Errno 2] No such file or directory: 'install'```
+when typing ```yarn install```, follow this guide 
+=> https://stackoverflow.com/questions/46013544/yarn-install-command-error-no-such-file-or-directory-install
 ```
 git clone this file
 ```
 ```
-
+cd fish-io-project
 yarn install
 yarn start
 ```
