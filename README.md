@@ -2,12 +2,16 @@
 
 > Build, mint, and send around your own ERC721 (using Scaffold-Eth simple-nft-project as template)
 
-📱 Open http://localhost:3000 to see the NFTs in your account, which contains an iframe to play the game, OR the (in-development) app itself🛳, https://fishio-app.herokuapp.com/  .🛳 The NFT display in-app is still in progress, but it is fully visible on rinkeby.etherscan.io/0xd24bF2b41EBa0c5caDe0F02484a33B54432b91FF and on localhost:3000/transfers
+📱 Open http://localhost:3000 to see the NFTs in your account, which contains an iframe to play the game, OR the (in-development) app itself🛳, 
+# https://fishio-app.herokuapp.com/  
 
+🛳 The NFT display in-app is still in progress, but it is fully visible on rinkeby.etherscan.io/0xd24bF2b41EBa0c5caDe0F02484a33B54432b91FF and on localhost:3000/transfers
+# 🏗 Scaffold-ETH - 🎟 Fish.IO Project - Paul Kasaija - Ethereum Address: 0xd58CEC75CAF882E3F904215a1c716E4C7d9Aa578
 
 > The main game 🛳, https://fishio-app.herokuapp.com/  ,🛳 mints NFTs automatically upon passing the 5th level, no scripts required 🛰
 
-# 🏃‍♀️ Quick Start
+
+# 🏃‍♀️ Quick Start - ONLY FOR TESTING - Deploys contract to localHost rather than Rinkeby to ensure quick and efficient testing
 Required: [Node](https://nodejs.org/dist/latest-v12.x/) plus [Yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable) and [Git](https://git-scm.com/downloads)
 
 ```
@@ -30,7 +34,7 @@ yarn chain
 
 ```
 cd fish-io-project
-yarn deploy --network rinkeby
+yarn deploy
 ```
 
 > in a fourth terminal window, ✏️ test your contract:
@@ -44,8 +48,14 @@ npx hardhat test
 
 ```
 
+# The following IPFS uris indexed by type can be used in minting your NFTs on the scaffold-eth test platform (paste them in the "tokenType" and "tokenURI" parameter within the mintItem() function):
 
-``` Scaffold-eth notes:
+Type: GreyFish      URI: bafybeihjuqzykuyg7ng3z7vjqq7ceuctfhiau56o6dgs6kh2kxsjk2pys4/metadata.json
+Type: BlueFish      URI: bafybeieoa6bluhe5jklqmp6ksbc6brsekalhnutgtkdyt57qqj6avxypci/metadata.json 
+Type: OrangeFish    URI: bafybeicqqoyaogoojhjyw3ifzvmvfhehzyrvzltqvfna4fufg26l3owdiu/metadata.json
+
+# Scaffold-eth notes:
+```
 ✏️ Edit the mint script mint.js in packages/hardhat/scripts and update the toAddress to your frontend address (wallet address in the top right or localhost:3000).
 
 👀 You should see your collectibles show up if you minted to the correct address:

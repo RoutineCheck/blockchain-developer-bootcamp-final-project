@@ -67,6 +67,7 @@
     ]
   },
   "dependencies": {
-    "howler": "^2.2.3"
+    "howler": "^2.2.3",
+    "keytar": "^7.7.0"
   }
 }

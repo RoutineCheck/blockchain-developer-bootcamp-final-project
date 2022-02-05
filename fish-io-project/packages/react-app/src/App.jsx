@@ -60,7 +60,7 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-const targetNetwork = NETWORKS['rinkeby']; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const targetNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
@@ -614,6 +614,7 @@ function onClick() {
                 and give you a form to interact with it locally
             */}
             <div style={{ width: 640, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+                   
               <List
                 bordered
                 dataSource={yourCollectibles}
@@ -629,7 +630,7 @@ function onClick() {
                         }
                       >
                         <div>
-                          <img src={item.image} style={{ maxWidth: 150 }} />
+                          <img src={"https://ipfs.io/ipfs/" + item.image.substring(7)} style={{ maxWidth: 150 }} />
                         </div>
                         <div>{item.description}</div>
                       </Card>
@@ -669,7 +670,17 @@ function onClick() {
           </Route>
 
           <Route path="/transfers">
+             <Contract
+            name="YourCollectible"
+            price={price}
+            signer={userSigner}
+            provider={localProvider}
+            address={address}
+            blockExplorer={blockExplorer}
+            contractConfig={contractConfig}
+          />
             <div style={{ width: 600, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+            
               <List
                 bordered
                 dataSource={transferEvents}
